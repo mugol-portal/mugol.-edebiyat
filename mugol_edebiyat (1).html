@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MuGöl Edebiyat - Türk ve Dünya Edebiyatının ustaları, şairleri ve eserleri.">
+    <title>MuGöl Edebiyat | Kütüphane</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Resim İndirme (Export) için Kütüphane -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #f9f7f3; 
+            --bg-card: #ffffff;
+            --primary: #1b263b; 
+            --primary-light: #415a77;
+            --accent: #c4a77d;  
+            --text-dark: #2b2d42;
+            --text-light: #6c757d;
+            --danger: #d90429;
+            --shadow-sm: 0 5px 15px rgba(0,0,0,0.05);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Lora', serif; background-color: var(--bg-base); color: var(--text-dark); line-height: 1.7; overflow-x: hidden; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(rgba(27, 38, 59, 0.95), rgba(27, 38, 59, 0.98)), url('https://www.transparenttextures.com/patterns/stardust.png');
+            color: #fff; text-align: center; padding: 1.8rem 1rem 2rem 1rem; position: relative;
+            border-bottom: 4px solid var(--accent); box-shadow: var(--shadow-lg);
+        }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 0.2rem; }
+        header p { font-style: italic; font-size: 1rem; color: #e0e1dd; margin-bottom: 1.2rem; opacity: 0.9; }
+
+        .search-wrapper { max-width: 600px; margin: 0 auto; position: relative; }
+        .search-wrapper input {
+            width: 100%; padding: 15px 20px 15px 50px; border-radius: 30px;
+            border: 1px solid rgba(196, 167, 125, 0.4); background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(5px); color: #fff; font-family: 'Lora', serif; font-size: 1.1rem;
+            outline: none; transition: 0.3s;
+        }
+        .search-wrapper input::placeholder { color: #a1a1aa; }
+        .search-wrapper input:focus { background: rgba(255,255,255,0.1); border-color: var(--accent); box-shadow: 0 0 15px rgba(196, 167, 125, 0.3); }
+        .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; }
+
+        .header-actions { position: absolute; top: 30px; left: 30px; display: flex; gap: 20px; }
+        .icon-btn { font-size: 1.8rem; color: var(--accent); cursor: pointer; background: none; border: none; transition: 0.3s; }
+        .icon-btn:hover { color: #fff; transform: scale(1.1); }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; top: 0; left: -320px; width: 320px; height: 100vh;
+            background: var(--primary); border-right: 1px solid rgba(196, 167, 125, 0.3);
+            transition: left 0.4s ease; z-index: 1000; padding-top: 80px; box-shadow: var(--shadow-lg);
+        }
+        .sidebar.open { left: 0; }
+        .sidebar-title { color: var(--accent); font-family: 'Playfair Display', serif; font-size: 1.8rem; text-align: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(196, 167, 125, 0.2); padding-bottom: 1rem; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { padding: 18px 30px; font-family: 'Playfair Display', serif; font-size: 1.2rem; cursor: pointer; color: #e0e1dd; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.3s; display: flex; align-items: center; gap: 15px; }
+        .sidebar ul li i { color: var(--accent); width: 20px; text-align: center; }
+        .sidebar ul li:hover, .sidebar ul li.active { background: rgba(196, 167, 125, 0.1); color: var(--accent); padding-left: 40px; border-left: 4px solid var(--accent); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 999; display: none; opacity: 0; transition: 0.4s; }
+        .overlay.open { display: block; opacity: 1; }
+
+        /* YENİ NESİL GÜNÜN SÖZÜ KARTI (POSTER TASARIMI) */
+        .qotd-wrapper { max-width: 800px; margin: 3rem auto 1rem auto; padding: 0 1.5rem; display: none; }
+        .qotd-wrapper.visible { display: block; }
+        .qotd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .qotd-header h2 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.8rem; }
+        
+        .qotd-card-capture { 
+            background: linear-gradient(135deg, #1b263b, #415a77); 
+            border-radius: 4px; padding: 5rem 4rem; color: #fff; text-align: center;
+            box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+            transition: background 0.5s ease; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; min-height: 450px;
+            border: 8px solid rgba(255,255,255,0.1);
+        }
+        
+        .qotd-card-capture::before {
+            content: '\201C'; font-family: Georgia, serif; position: absolute;
+            top: 10px; left: 30px; font-size: 8rem; color: rgba(196, 167, 125, 0.3); line-height: 1;
+        }
+        .qotd-card-capture::after {
+            content: '\201D'; font-family: Georgia, serif; position: absolute;
+            bottom: -30px; right: 30px; font-size: 8rem; color: rgba(196, 167, 125, 0.3); line-height: 1;
+        }
+
+        .qotd-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 500; line-height: 1.6; margin-bottom: 2rem; position: relative; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+        .qotd-divider { width: 50px; height: 3px; background-color: var(--accent); margin: 0 auto 1.5rem auto; z-index: 2; }
+        .qotd-author { font-size: 1.3rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; z-index: 2; font-family: 'Lora', serif; }
+        .qotd-book { font-size: 1rem; color: #e0e1dd; font-style: italic; margin-top: 0.5rem; z-index: 2; }
+        .qotd-brand { position: absolute; bottom: 15px; width: 100%; text-align: center; left: 0; font-size: 0.85rem; color: rgba(255,255,255,0.6); font-family: 'Lora', serif; z-index: 2; letter-spacing: 1px;}
+
+        .qotd-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem; background: var(--bg-card); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: var(--shadow-sm); }
+        
+        .color-palette { display: flex; gap: 10px; align-items: center;}
+        .color-palette span { font-size: 0.9rem; color: var(--text-light); font-weight: bold; margin-right: 5px; }
+        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .color-swatch:hover, .color-swatch.active { border-color: var(--accent); transform: scale(1.1); }
+        
+        .action-btns { display: flex; gap: 10px; }
+        .btn-action { background: var(--bg-base); border: 1px solid var(--accent); color: var(--primary); padding: 0.6rem 1.2rem; border-radius: 30px; font-family: 'Lora', serif; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-action:hover { background: var(--accent); color: #fff; }
+
+        /* CARDS */
+        .container { max-width: 1300px; margin: 2rem auto 4rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 3rem; min-height: 50vh; }
+        .card { background: var(--bg-card); border-radius: 16px; padding: 2.5rem 1.8rem 1.2rem 1.8rem; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; box-shadow: 0 4px 20px rgba(27,38,59,0.08); transition: 0.4s; animation: fadeUp 0.6s ease backwards; border: 1px solid rgba(196,167,125,0.15); margin-top: 40px; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(27,38,59,0.16); border-color: rgba(196,167,125,0.4); }
+
+        .author-img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; position: absolute; top: -45px; left: 50%; transform: translateX(-50%); border: 3px solid var(--accent); box-shadow: 0 4px 14px rgba(27,38,59,0.2); background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-family: 'Playfair Display', serif; }
+
+        .fav-btn { position: absolute; top: 14px; right: 14px; font-size: 1.4rem; color: #dee2e6; cursor: pointer; transition: 0.3s; background: none; border: none; }
+        .fav-btn.active { color: var(--danger); }
+        .fav-btn:hover { transform: scale(1.15); }
+
+        .card-category-tag { position: absolute; top: 14px; left: 14px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 20px; background: rgba(196,167,125,0.15); color: var(--accent); border: 1px solid rgba(196,167,125,0.3); }
+
+        .author-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); margin-top: 1.5rem; }
+        .author-meta { font-size: 0.82rem; color: var(--accent); font-weight: bold; margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .author-meta span { color: var(--text-light); margin: 0 5px; }
+
+        .bio-short { color: var(--text-light); font-size: 0.9rem; margin-bottom: 1.2rem; flex-grow: 1; line-height: 1.6; }
+        .quote { padding: 0.9rem 1rem; font-style: italic; color: var(--primary-light); background: linear-gradient(135deg, rgba(196,167,125,0.07), rgba(27,38,59,0.04)); border-radius: 10px; font-size: 0.9rem; width: 100%; margin-bottom: 1.2rem; border-left: 3px solid var(--accent); text-align: left; line-height: 1.6; }
+
+        .btn-detail { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); padding: 0.7rem; width: 100%; font-family: 'Playfair Display', serif; font-size: 1rem; cursor: pointer; border-radius: 30px; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 0; }
+        .btn-detail:hover { background: var(--primary); color: #fff; }
+
+        .card-brand { width: 100%; text-align: center; padding-top: 0.8rem; margin-top: 0.5rem; border-top: 1px solid rgba(196,167,125,0.2); font-size: 0.72rem; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; font-family: 'Lora', serif; opacity: 0.8; }
+
+        /* MODAL */
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--bg-card); width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto; border-radius: 16px; z-index: 1002; display: none; opacity: 0; box-shadow: 0 25px 50px rgba(0,0,0,0.4); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal.open { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 2.5rem; cursor: pointer; color: var(--primary); z-index: 10; transition: 0.3s; }
+        .close-modal:hover { color: var(--danger); transform: rotate(90deg); }
+
+        .modal-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
+        .modal-left { background: var(--primary); color: #fff; padding: 3rem 2rem; text-align: center; }
+        .modal-left img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); margin-bottom: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .modal-left h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .modal-left .meta-chip { display: inline-block; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; margin: 5px; }
+        
+        .modal-right { padding: 3rem 2.5rem; }
+        .modal-bio { font-size: 1.05rem; color: var(--text-dark); margin-bottom: 2rem; line-height: 1.8; text-align: justify; }
+        .modal-right h3 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.5rem; border-bottom: 2px solid var(--bg-base); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+        
+        .modal-books { list-style: none; display: grid; gap: 1rem; }
+        .modal-books li { background: var(--bg-base); padding: 1.2rem; border-radius: 8px; border-left: 4px solid var(--accent); display: flex; flex-direction: column; }
+        .book-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;}
+        .book-header strong { color: var(--primary); font-family: 'Playfair Display', serif; font-size: 1.15rem; }
+        .book-year { background: var(--primary); color: #fff; font-size: 0.8rem; padding: 2px 8px; border-radius: 12px; font-weight: bold;}
+
+        /* FOOTER */
+        footer { background: var(--primary); color: #a1a1aa; text-align: center; padding: 3rem 2rem; margin-top: 4rem; border-top: 2px solid var(--accent); display: flex; flex-direction: column; gap: 15px; }
+        .footer-source { font-size: 0.95rem; background: rgba(255,255,255,0.05); display: inline-block; padding: 10px 20px; border-radius: 20px; margin: 0 auto;}
+        .footer-source a { color: var(--accent); text-decoration: none; font-weight: bold; }
+        .footer-source a:hover { text-decoration: underline; color: #fff; }
+
+        .status-msg { text-align: center; grid-column: 1 / -1; font-size: 1.2rem; font-style: italic; color: var(--text-light); padding: 3rem; background: var(--bg-card); border-radius: 8px; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 768px) { 
+            header h1 { font-size: 2rem; } 
+            .qotd-card-capture { padding: 3rem 2rem; }
+            .modal-grid { grid-template-columns: 1fr; } 
+            .modal-left { padding: 2rem; } 
+            .modal-right { padding: 2rem 1.5rem; } 
+            .book-header { flex-direction: column; align-items: flex-start; gap: 5px;}
+            .qotd-controls { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-actions">
+            <button class="icon-btn" id="menuToggle" title="Kategoriler"><i class="fas fa-bars"></i></button>
+            <button class="icon-btn" id="randomBtn" title="Rastgele Yazar Keşfet"><i class="fas fa-dice"></i></button>
+        </div>
+        <h1>MuGöl Edebiyat</h1>
+        <p>Kelimelerin İzinde, İnsanlığın Özüne Yolculuk</p>
+        
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Yazar, şair veya kategori ara..." autocomplete="off">
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-title">Kütüphane</div>
+        <ul>
+            <li class="filter-item active" data-filter="all"><i class="fas fa-book-open"></i> Tüm Eserler</li>
+            <li class="filter-item" data-filter="turk"><i class="fas fa-map-marker-alt"></i> Türk Edebiyatı</li>
+            <li class="filter-item" data-filter="dunya"><i class="fas fa-globe"></i> Dünya Edebiyatı</li>
+            <li class="filter-item" data-filter="sairler"><i class="fas fa-feather-alt"></i> Şairler</li>
+            <li class="filter-item" data-filter="sozler"><i class="fas fa-quote-left"></i> Sözler</li>
+            <li class="filter-item" data-filter="kitaplar"><i class="fas fa-books"></i> Kitaplar</li>
+            <li class="filter-item" data-filter="favoriler"><i class="fas fa-heart"></i> Favorilerim</li>
+        </ul>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+
+    <section class="qotd-wrapper">
+        <div class="qotd-header">
+            <h2><i class="fas fa-quote-left" style="color: var(--accent);"></i> İlham Veren Sözler</h2>
+            <button class="btn-action" onclick="loadRandomQuote()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" title="Başka Söz Getir"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        
+        <div class="qotd-card-capture" id="captureTarget">
+            <div class="qotd-text" id="qText">"Yükleniyor..."</div>
+            <div class="qotd-divider"></div>
+            <div class="qotd-author" id="qAuthor">-</div>
+            <div class="qotd-book" id="qBook"></div>
+            <div class="qotd-brand">MuGöl Edebiyat</div>
+        </div>
+
+        <div class="qotd-controls">
+            <div class="color-palette">
+                <span>Arka Plan:</span>
+                <div class="color-swatch active" style="background: linear-gradient(135deg, #1b263b, #415a77);" data-bg="linear-gradient(135deg, #1b263b, #415a77)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #2b2d42, #8d99ae);" data-bg="linear-gradient(135deg, #2b2d42, #8d99ae)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #386641, #a7c957);" data-bg="linear-gradient(135deg, #386641, #a7c957)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #603808, #c4a77d);" data-bg="linear-gradient(135deg, #603808, #c4a77d)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #641220, #a01a58);" data-bg="linear-gradient(135deg, #641220, #a01a58)"></div>
+            </div>
+            <div class="action-btns">
+                <button class="btn-action" id="downloadBtn"><i class="fas fa-download"></i> Poster Olarak İndir</button>
+                <button class="btn-action" id="shareBtn"><i class="fas fa-share-alt"></i> Paylaş</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="container" id="author-container">
+        <!-- JS ile doldurulacak -->
+    </main>
+
+    <div class="modal" id="authorModal">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <div id="modalContent"></div>
+    </div>
+
+    <footer>
+        <div class="footer-source">
+            <i class="fas fa-info-circle"></i> Bu kütüphanedeki yazar ve şair biyografileri 
+            <a href="https://www.turkedebiyati.org/" target="_blank" rel="noopener noreferrer">Türk Edebiyatı (turkedebiyati.org)</a> 
+            ve evrensel edebiyat kaynakları derlenerek hazırlanmıştır.
+        </div>
+        <p>&copy; <span id="year"></span> MuGöl Edebiyat Uygulaması. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script>
+        // --- TÜM VERİ TABANI (JSON DOSYALARI YERİNE BURAYA GÖMÜLDÜ) ---
+        const authorsData = [
+            { id: 1, name: "Sabahattin Ali", category: "turk", isPoet: false, years: "1907-1948", movement: "Toplumcu Gerçekçi", shortBio: "Toplumcu gerçekçi edebiyatımızın en güçlü kalemlerindendir.", longBio: "25 Şubat 1907'de Gümülcine'de doğan Sabahattin Ali, eserlerinde Anadolu insanının dertlerini, kasaba yaşamını ve insanın iç dünyasındaki yalnızlığı işlemiştir. Markopaşa dergisindeki mizahi yazılarıyla da tanınır. Kürk Mantolu Madonna ve Kuyucaklı Yusuf ile Türk edebiyatı tarihine damga vurmuştur.", quote: "Dünyada hayatın bir tek manası varsa o da sevmektir." },
+            { id: 2, name: "Fyodor Dostoyevski", category: "dunya", isPoet: false, years: "1821-1881", movement: "Gerçekçilik", shortBio: "İnsan psikolojisinin derinliklerine inen, Rus edebiyatının dehası.", longBio: "1821'de doğan yazar, Çarlık Rusya'sında idama mahkum edilip Sibirya'ya gönderilmesiyle büyük bir ruhsal değişim yaşadı. Suç, ahlak, vicdan azabı ve varoluş üzerine yazdığı romanlar edebiyat dünyasında henüz aşılamamıştır.", quote: "Her insan, herkesin önünde, her şeyden sorumludur." },
+            { id: 3, name: "Oğuz Atay", category: "turk", isPoet: false, years: "1934-1977", movement: "Postmodernizm", shortBio: "Türk edebiyatında postmodernizmin öncüsü, aydın bunalımının ustası.", longBio: "İTÜ İnşaat Fakültesi mezunu olan Atay, 'Tutunamayanlar' eseriyle Türk romanında yapısal bir devrim yapmıştır. Topluma yabancılaşmayı, aydınların bunalımını kara mizah, iç monolog ve bilinçakışı teknikleriyle harmanlayarak anlatmıştır.", quote: "Ben iç dünyamıza dönüyorum. Orada hayal kırıklığına yer yok." },
+            { id: 4, name: "Franz Kafka", category: "dunya", isPoet: false, years: "1883-1924", movement: "Modernizm", shortBio: "Bürokrasi ve yabancılaşma temalarının dünya çapındaki sembolü.", longBio: "Prag'da doğan yazar, insanın modern toplumdaki sıkışmışlığını ve suçluluk duygusunu işlemiştir. 'Kafkaesk' terimini dünya lügatine sokmuştur. Eserlerinin çoğunu yaktırmak istemesine rağmen dostu Max Brod sayesinde günümüze ulaşmıştır.", quote: "Bir kitap, içimizdeki donmuş denize inen bir balta gibi olmalıdır." },
+            { id: 5, name: "Nazım Hikmet Ran", category: "turk", isPoet: true, years: "1902-1963", movement: "Serbest Nazım / Toplumcu", shortBio: "Türk şiirine serbest nazımı getiren evrensel usta.", longBio: "Hece ölçüsünü bırakarak Rus fütüristlerinden (Mayakovski) etkilenmiş ve Türk şiirine serbest nazımı getirmiştir. Şiirlerinde memleket sevgisini, hasreti ve aşkı destansı bir dille anlatmıştır. Eserleri 50'den fazla dile çevrilen dünya çapında bir şairimizdir.", quote: "Yaşamak şakaya gelmez, büyük bir ciddiyetle yaşayacaksın." },
+            { id: 6, name: "Cemal Süreya", category: "turk", isPoet: true, years: "1931-1990", movement: "İkinci Yeni", shortBio: "İkinci Yeni hareketinin öncüsü, aşk ve ironinin kalemi.", longBio: "Asıl adı Cemalettin Seber'dir. İkinci Yeni şiirinin en popüler ve belirleyici şairlerindendir. Papirüs dergisini çıkarmış; aşkı, erotizmi ve siyasi eleştiriyi zekice bir ironiyle Türk şiirine kazandırmıştır.", quote: "Hayat kısa, kuşlar uçuyor." },
+            { id: 7, name: "Edgar Allan Poe", category: "dunya", isPoet: true, years: "1809-1849", movement: "Romantizm / Gotik", shortBio: "Gotik edebiyatın ve modern dedektiflik kurgusunun babası.", longBio: "Amerikan edebiyatının en gizemli figürüdür. İnsan psikolojisinin karanlık yanlarını, ölümü ve melankoliyi şiirsel bir matematikle yazmıştır. Polisiye türünün mucidi kabul edilir.", quote: "Gördüğümüz ve göründüğümüz her şey, sadece bir rüya içinde rüyadır." },
+            { id: 8, name: "Özdemir Asaf", category: "turk", isPoet: true, years: "1923-1981", movement: "Bağımsız", shortBio: "Kısa, vurucu ve felsefi şiirlerin unutulmaz şairi.", longBio: "Asıl adı Halit Özdemir Arun'dur. Şiirlerinde ikilikler, karşıtlıklar ve kelime oyunlarına bolca yer verir. İnsan ilişkilerini, yalnızlığı ve aşkı genellikle epigram (kısa ve özlü) tarzda felsefi bir derinlikle yazmıştır.", quote: "Yalnızlık paylaşılmaz, paylaşılsa yalnızlık olmaz." },
+            { id: 9, name: "Ahmet Hamdi Tanpınar", category: "turk", isPoet: true, years: "1901-1962", movement: "Saf Şiir / Bireyci", shortBio: "Zaman, rüya ve Doğu-Batı sentezinin en büyük mimarı.", longBio: "Yahya Kemal'in öğrencisi olan Tanpınar; şiir, roman ve deneme türlerinde eserler vermiştir. Türk insanının Doğu-Batı arasındaki medeniyet krizini psikolojik bir boyutta, rüya ve zaman kavramlarıyla ele almıştır.", quote: "Ne içindeyim zamanın, ne de büsbütün dışında." },
+            { id: 10, name: "Virginia Woolf", category: "dunya", isPoet: false, years: "1882-1941", movement: "Modernizm", shortBio: "Bilinçakışı tekniğinin ve feminist edebiyatın İngiliz kraliçesi.", longBio: "Victoria dönemi kısıtlamalarına karşı çıkarak modernizmi şekillendiren Bloomsbury Grubu'nun üyesidir. Karakterlerin iç seslerini aralıksız bir şekilde aktararak edebiyatta zaman algısını değiştirmiştir.", quote: "Para kazanın, kendinize ait ayrı bir oda yaratın. Ve yazın." },
+            { id: 11, name: "Gabriel García Márquez", category: "dunya", isPoet: false, years: "1927-2014", movement: "Büyülü Gerçekçilik", shortBio: "Büyülü gerçekçilik akımının Latin Amerikalı Nobel ödüllü dehası.", longBio: "Latin Amerika'nın mitlerini, acılarını ve tarihini efsanevi bir dille edebiyata kazandırdı. Gerçeküstü olayları son derece sıradanmış gibi anlatma ustasıdır.", quote: "Hayat, insanın yaşadığı değil; hatırladığıdır." },
+            { id: 12, name: "Orhan Veli Kanık", category: "turk", isPoet: true, years: "1914-1950", movement: "Garip Akımı (I. Yeni)", shortBio: "Garip akımının kurucusu, sokağın ve sıradan insanın şairi.", longBio: "Şiiri ölçü, uyak ve şairanelikten kurtararak sokağın dilini edebiyata taşımıştır. Oktay Rıfat ve Melih Cevdet ile birlikte Türk şiirindeki en büyük kırılmayı yaratan 'Garip' önsözünü yazmıştır.", quote: "Beni bu güzel havalar mahvetti." },
+            { id: 13, name: "George Orwell", category: "dunya", isPoet: false, years: "1903-1950", movement: "Modernizm / Distopya", shortBio: "Distopik edebiyatın ve politik hicvin en büyük ustası.", longBio: "Asıl adı Eric Arthur Blair'dir. Totalitarizme, baskıcı rejimlere karşı yazdığı eserlerle 20. yüzyıl siyasi düşüncesini derinden etkilemiş İngiliz yazardır.", quote: "Sahtekarlığın evrensel düzeyde hakim olduğu bir zamanda, gerçeği söylemek devrimci bir eylemdir." },
+            { id: 14, name: "Sait Faik Abasıyanık", category: "turk", isPoet: false, years: "1906-1954", movement: "Bireyci Öykü", shortBio: "Türk öykücülüğünün kilometre taşı, İstanbul'un ve denizin yazarı.", longBio: "Çehov tarzı (durum) hikayeciliğinin Türk edebiyatındaki en büyük temsilcisidir. Gözlemci ve şiirsel diliyle balıkçıların, Adalar'ın, yoksulların ve doğanın sesini öyküye taşımıştır.", quote: "Bir insanı sevmekle başlayacak her şey." },
+            { id: 15, name: "Attilâ İlhan", category: "turk", isPoet: true, years: "1925-2005", movement: "Maviciler", shortBio: "Romantik devrimciliğin, aşkın ve sinematografik şiirin ustası.", longBio: "Maviciler akımının öncüsüdür. Şiirlerinde imlasız bir dil kullanır. Büyük şehirlerin ara sokaklarını, gerilimli aşkları, siyasi kaçakları sinematografik bir kurgu ve yüksek bir coşkuyla anlatır.", quote: "Ben sana mecburum bilemezsin, adını mıh gibi aklımda tutuyorum." },
+            { id: 16, name: "Yaşar Kemal", category: "turk", isPoet: false, years: "1923-2015", movement: "Toplumcu Gerçekçi", shortBio: "Anadolu destanlarının ve Çukurova'nın evrensel yazarı.", longBio: "Asıl adı Kemal Sadık Gökçeli'dir. Türkçenin en zengin sözcük dağarcığına sahip, Nobel'e aday gösterilen ilk yazarımızdır. İnsanın doğayla ve ezenlerle (ağa-köylü) mücadelesini destanlaştırmıştır.", quote: "İnsan, evrende gövdesi kadar değil, yüreği kadar yer kaplar." },
+            { id: 17, name: "Reşat Nuri Güntekin", category: "turk", isPoet: false, years: "1889-1956", movement: "Milli Edebiyat", shortBio: "Anadolu'yu aydınlatan öğretmenlerin ve idealizmin romancısı.", longBio: "Milli Edebiyat zevk ve anlayışını sürdüren yazarlarımızdandır. Anadolu'nun sosyal yaşantısını, inançlarını ve yanlış batılılaşmayı müthiş bir gözlem yeteneğiyle ve sade bir Türkçeyle yazmıştır.", quote: "İnsan bir şeyi çok ciddi olarak arzu etmeye görsün, hiçbir şey erişilemeyecek kadar yüksekte değildir." }
+        ];
+
+        const booksData = [
+            { id: 101, authorId: 1, title: "Kürk Mantolu Madonna", year: "1943", desc: "Raif Efendi'nin Maria Puder'e duyduğu unutulmaz aşk ve içsel yalnızlığı." },
+            { id: 102, authorId: 1, title: "Kuyucaklı Yusuf", year: "1937", desc: "Bir Anadolu kasabasındaki yozlaşma ve ezilen köylü sınıfı." },
+            { id: 103, authorId: 2, title: "Suç ve Ceza", year: "1866", desc: "Raskolnikov'un işlediği cinayet sonrası çektiği vicdan azabı ve ruhsal çöküşü." },
+            { id: 104, authorId: 2, title: "Karamazov Kardeşler", year: "1880", desc: "İnanç, şüphe ve ahlak felsefesi üzerine yazılmış bir başyapıt." },
+            { id: 105, authorId: 3, title: "Tutunamayanlar", year: "1972", desc: "Turgut Özben'in, intihar eden arkadaşı Selim Işık üzerinden aydınları sorgulaması." },
+            { id: 106, authorId: 4, title: "Dönüşüm", year: "1915", desc: "Gregor Samsa'nın bir sabah uyandığında dev bir böceğe dönüşmesi ve ailenin tepkisi." },
+            { id: 107, authorId: 5, title: "Memleketimden İnsan Manzaraları", year: "1966", desc: "Anadolu insanının tarihi, sosyal durumu ve destansı panoraması." },
+            { id: 108, authorId: 6, title: "Üvercinka", year: "1958", desc: "İkinci Yeni akımının manifestosu niteliğinde, dilin sınırlarını zorlayan şiirler." },
+            { id: 109, authorId: 7, title: "Kuzgun (The Raven)", year: "1845", desc: "Lenore adındaki kayıp aşkını sayıklayan bir adamın gotik ve karanlık şiiri." },
+            { id: 110, authorId: 8, title: "Çiçek Senfonisi", year: "2008", desc: "Özdemir Asaf'ın toplu şiirlerini içeren efsanevi derleme kitabı." },
+            { id: 111, authorId: 9, title: "Saatleri Ayarlama Enstitüsü", year: "1961", desc: "Doğu ve Batı arasında sıkışmış Türk toplumunun bürokrasi üzerinden muazzam ironisi." },
+            { id: 112, authorId: 10, title: "Kendine Ait Bir Oda", year: "1929", desc: "Feminist edebiyatın en önemli manifestolarından; yazar olmak isteyen kadınlara tavsiyeler." },
+            { id: 113, authorId: 11, title: "Yüzyıllık Yalnızlık", year: "1967", desc: "Buendia ailesinin ve Macondo kasabasının yedi kuşaklık büyülü, efsanevi hikayesi." },
+            { id: 114, authorId: 12, title: "Garip", year: "1941", desc: "Türk şiirindeki uyak ve ölçü geleneklerini yıkan kurucu nitelikteki eser." },
+            { id: 115, authorId: 13, title: "1984", year: "1949", desc: "Büyük Birader'in gölgesinde, düşüncenin bile suç olduğu distopik bir gelecek." },
+            { id: 116, authorId: 14, title: "Alemdağ'da Var Bir Yılan", year: "1954", desc: "Sait Faik'in yalnızlık ve doğa temalı sürrealist dönem öyküleri." },
+            { id: 117, authorId: 15, title: "Duvar", year: "1948", desc: "Attilâ İlhan'ın özgürlük, savaş ve romantik devrimci düşüncelerini yansıtan şiirleri." },
+            { id: 118, authorId: 16, title: "İnce Memed", year: "1955", desc: "Çukurova'da ağalık düzenine isyan eden, zulme başkaldıran eşkıya Memed'in destanı." },
+            { id: 119, authorId: 17, title: "Çalıkuşu", year: "1922", desc: "İstanbullu öğretmen Feride'nin Anadolu'da yaşadığı zorluklar ve idealizmi." }
+        ];
+
+        const quotesData = [
+            { id: 1, authorName: "Sabahattin Ali", text: "Dünyada hayatın bir tek manası varsa o da sevmektir. Hatta mukabele edilmesini bile beklemeden sadece sevmek.", book: "Kürk Mantolu Madonna" },
+            { id: 2, authorName: "Sabahattin Ali", text: "İçimde yarım kalmış bir konuşmanın üzüntüsü vardı.", book: "Kürk Mantolu Madonna" },
+            { id: 3, authorName: "Fyodor Dostoyevski", text: "Her insan, herkesin önünde, her şeyden sorumludur.", book: "Karamazov Kardeşler" },
+            { id: 4, authorName: "Fyodor Dostoyevski", text: "Yeni bir adım atmak, yeni bir kelime söylemek, insanların en çok korktuğu şeydir.", book: "Suç ve Ceza" },
+            { id: 5, authorName: "Oğuz Atay", text: "Ben iç dünyamıza dönüyorum. Orada hayal kırıklığına yer yok.", book: "Tutunamayanlar" },
+            { id: 6, authorName: "Oğuz Atay", text: "Kelimeler albayım, bazı anlamlara gelmiyor.", book: "Tehlikeli Oyunlar" },
+            { id: 7, authorName: "Franz Kafka", text: "Bir kitap, içimizdeki donmuş denize inen bir balta gibi olmalıdır.", book: "Aforizmalar" },
+            { id: 8, authorName: "Franz Kafka", text: "Beynimin içinde öyle muazzam bir dünya var ki. Fakat kendimi yırtmadan, o dünyayı nasıl dışarı çıkarabilirim?", book: "Günlükler" },
+            { id: 9, authorName: "Nazım Hikmet Ran", text: "Yaşamak şakaya gelmez, büyük bir ciddiyetle yaşayacaksın. Bir sincap gibi mesela...", book: "Yaşamaya Dair" },
+            { id: 10, authorName: "Nazım Hikmet Ran", text: "En güzel deniz: henüz gidilmemiş olandır. En güzel çocuk: henüz büyümedi.", book: "Memleketimden İnsan Manzaraları" },
+            { id: 11, authorName: "Cemal Süreya", text: "Hayat kısa, kuşlar uçuyor.", book: "Sevda Sözleri" },
+            { id: 12, authorName: "Cemal Süreya", text: "Biz kırıldıktan sonra eskisinden daha sağlam oluruz.", book: "Üvercinka" },
+            { id: 13, authorName: "Ahmet Hamdi Tanpınar", text: "Ne içindeyim zamanın, ne de büsbütün dışında; yekpare, geniş bir anın parçalanmaz akışında.", book: "Bütün Şiirleri" },
+            { id: 14, authorName: "Ahmet Hamdi Tanpınar", text: "İnsan, kendi hayalinin peşinden koştuğu müddetçe insandır.", book: "Huzur" },
+            { id: 15, authorName: "Virginia Woolf", text: "Para kazanın, kendinize ait ayrı bir oda yaratın. Ve yazın, erkekler ne der diye düşünmeden yazın.", book: "Kendine Ait Bir Oda" },
+            { id: 16, authorName: "Gabriel García Márquez", text: "Hayat, insanın yaşadığı değil; hatırladığı ve anlatmak için nasıl hatırladığıdır.", book: "Anlatmak İçin Yaşamak" },
+            { id: 17, authorName: "George Orwell", text: "Sahtekarlığın evrensel düzeyde hakim olduğu bir zamanda, gerçeği söylemek devrimci bir eylemdir.", book: "1984" },
+            { id: 18, authorName: "Sait Faik Abasıyanık", text: "Söz vermiştim kendi kendime: Yazı bile yazmayacaktım. Ama hırs bu ya. Kalemi yonttum. Yonttuktan sonra tutamadım. Yazmasam deli olacaktım.", book: "Haritada Bir Nokta" },
+            { id: 19, authorName: "Sait Faik Abasıyanık", text: "Bir insanı sevmekle başlayacak her şey.", book: "Alemdağ'da Var Bir Yılan" },
+            { id: 20, authorName: "Özdemir Asaf", text: "Yalnızlık paylaşılmaz, paylaşılsa yalnızlık olmaz.", book: "Çiçek Senfonisi" },
+            { id: 21, authorName: "Özdemir Asaf", text: "Bütün renkler aynı hızla kirleniyordu, birinciliği beyaza verdiler.", book: "Jüri" },
+            { id: 22, authorName: "Attilâ İlhan", text: "Ben sana mecburum bilemezsin, adını mıh gibi aklımda tutuyorum. Büyüdükçe büyüyor gözlerin.", book: "Ben Sana Mecburum" },
+            { id: 23, authorName: "Attilâ İlhan", text: "Ayrılık sevdaya dahil, çünkü ayrılanlar hala sevgili.", book: "Ayrılık Sevdaya Dahil" },
+            { id: 24, authorName: "Yaşar Kemal", text: "İnsan, evrende gövdesi kadar değil, yüreği kadar yer kaplar.", book: "İnce Memed" },
+            { id: 25, authorName: "Yaşar Kemal", text: "O iyi insanlar, o güzel atlara bindiler çekip gittiler.", book: "Demirciler Çarşısı Cinayeti" },
+            { id: 26, authorName: "Reşat Nuri Güntekin", text: "İnsan bir şeyi çok ciddi olarak arzu etmeye görsün, hiçbir şey erişilemeyecek kadar yüksekte değildir.", book: "Çalıkuşu" },
+            { id: 27, authorName: "Lev Tolstoy", text: "Herkes dünyayı değiştirmeyi düşünür ama kimse kendini değiştirmeyi düşünmez.", book: "Savaş ve Barış" },
+            { id: 28, authorName: "Albert Camus", text: "Kışın en soğuk zamanında, içimde yenilmez bir yaz olduğunu öğrendim.", book: "Yabancı" },
+            { id: 29, authorName: "Edip Cansever", text: "Gökyüzü gibi bir şey bu çocukluk, hiçbir yere gitmiyor.", book: "Sonrası Kalır" },
+            { id: 30, authorName: "Tezer Özlü", text: "Yaşamım boyunca içimi kemirttiniz. Evlerinizle. Okullarınızla. İş yerlerinizle. Haklı ya da haksız olduğumu düşünmeden, boşver, diyerek.", book: "Çocukluğun Soğuk Geceleri" }
+        ];
+
+        // --- UYGULAMA MANTIĞI ---
+        const elements = {
+            menuToggle: document.getElementById('menuToggle'),
+            sidebar: document.getElementById('sidebar'),
+            overlay: document.getElementById('overlay'),
+            container: document.getElementById('author-container'),
+            filterItems: document.querySelectorAll('.filter-item'),
+            modal: document.getElementById('authorModal'),
+            modalContent: document.getElementById('modalContent'),
+            closeModal: document.getElementById('closeModal'),
+            searchInput: document.getElementById('searchInput'),
+            randomBtn: document.getElementById('randomBtn'),
+            year: document.getElementById('year'),
+            qText: document.getElementById('qText'),
+            qAuthor: document.getElementById('qAuthor'),
+            qBook: document.getElementById('qBook'),
+            captureTarget: document.getElementById('captureTarget'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            shareBtn: document.getElementById('shareBtn'),
+            swatches: document.querySelectorAll('.color-swatch')
+        };
+
+        elements.year.textContent = new Date().getFullYear();
+        let favorites = JSON.parse(localStorage.getItem('mugolFavorites')) || [];
+        let currentQuoteText = ""; 
+
+        const toggleMenu = () => { elements.sidebar.classList.toggle('open'); elements.overlay.classList.toggle('open'); }
+        const closeModalFunc = () => { elements.modal.classList.remove('open'); elements.overlay.classList.remove('open'); }
+        
+        elements.menuToggle.addEventListener('click', toggleMenu);
+        elements.overlay.addEventListener('click', () => { elements.sidebar.classList.remove('open'); closeModalFunc(); });
+        elements.closeModal.addEventListener('click', closeModalFunc);
+
+        const getInitials = name => name.split(' ').map(n => n[0]).join('').substring(0, 2);
+
+        window.toggleFavorite = (id, btnElement) => {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+                btnElement.classList.remove('active');
+            } else {
+                favorites.push(id);
+                btnElement.classList.add('active');
+            }
+            localStorage.setItem('mugolFavorites', JSON.stringify(favorites));
+            if(document.querySelector('.filter-item.active').dataset.filter === 'favoriler') displayAuthors('favoriler');
+        }
+
+        // Verileri Ekrana Bas
+        function displayAuthors(filterType, searchQuery = "") {
+            elements.container.innerHTML = '';
+
+            // Özel görünümler
+            if (filterType === 'sozler') {
+                document.querySelector('.qotd-wrapper').classList.add('visible');
+                displayQuotes(searchQuery);
+                return;
+            }
+            document.querySelector('.qotd-wrapper').classList.remove('visible');
+            if (filterType === 'kitaplar') {
+                displayBooks(searchQuery);
+                return;
+            }
+            
+            let filtered = authorsData.filter(author => {
+                let matchFilter = true;
+                if (filterType === 'turk' || filterType === 'dunya') matchFilter = author.category === filterType;
+                if (filterType === 'sairler') matchFilter = author.isPoet === true;
+                if (filterType === 'favoriler') matchFilter = favorites.includes(author.id);
+                
+                let searchLower = searchQuery.toLocaleLowerCase('tr-TR');
+                let nameMatch = author.name.toLocaleLowerCase('tr-TR').includes(searchLower);
+                let catMatch = author.category ? author.category.toLocaleLowerCase('tr-TR').includes(searchLower) : false;
+                
+                return matchFilter && (nameMatch || catMatch);
+            });
+
+            if (filtered.length === 0) {
+                elements.container.innerHTML = `<div class="status-msg"><i class="fas fa-feather"></i> Aradığınız kriterlerde eser veya yazar bulunamadı.</div>`;
+                return;
+            }
+
+            filtered.forEach((author, index) => {
+                const isFav = favorites.includes(author.id) ? 'active' : '';
+                const years = author.years || "Bilinmiyor";
+                const movement = author.movement || "Edebiyat";
+                const imageHTML = `<div class="author-img">${getInitials(author.name)}</div>`;
+
+                const catLabel = author.category === 'turk' ? 'Türk' : 'Dünya';
+                const typeLabel = author.isPoet ? 'Şair' : 'Yazar';
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                card.innerHTML = `
+                    ${imageHTML}
+                    <span class="card-category-tag">${catLabel} · ${typeLabel}</span>
+                    <button class="fav-btn ${isFav}" onclick="toggleFavorite(${author.id}, this)" title="Favori"><i class="fas fa-heart"></i></button>
+                    <h2 class="author-name">${author.name}</h2>
+                    <div class="author-meta">${years} <span>|</span> ${movement}</div>
+                    <p class="bio-short">${author.shortBio}</p>
+                    <div class="quote">"${author.quote}"</div>
+                    <button class="btn-detail" onclick="openModal(${author.id})"><i class="fas fa-book-open"></i> Eserleri İncele</button>
+                    <div class="card-brand">MuGöl Edebiyat</div>
+                `;
+                elements.container.appendChild(card);
+            });
+
+            if(window.innerWidth < 768 && elements.sidebar.classList.contains('open')) toggleMenu();
+        }
+
+        // Modal (Detay) Aç
+        window.openModal = (authorId) => {
+            const author = authorsData.find(a => a.id === authorId);
+            const authorBooks = booksData.filter(b => b.authorId === authorId);
+
+            let booksHTML = authorBooks.length > 0 
+                ? authorBooks.map(b => `
+                    <li>
+                        <div class="book-header">
+                            <strong>${b.title}</strong>
+                            <span class="book-year">${b.year}</span>
+                        </div>
+                        <span>${b.desc}</span>
+                    </li>`).join('') 
+                : "<li>Henüz eser eklenmedi.</li>";
+
+            const years = author.years || "Bilinmiyor";
+            const movement = author.movement || "Edebiyat";
+
+            elements.modalContent.innerHTML = `
+                <div class="modal-grid">
+                    <div class="modal-left">
+                        <div style="width:150px; height:150px; border-radius:50%; border:4px solid var(--accent); margin:0 auto 1.5rem auto; background:var(--bg-base); display:flex; align-items:center; justify-content:center; font-size:4rem; color:var(--primary); font-family:'Playfair Display', serif;">${getInitials(author.name)}</div>
+                        <h2>${author.name}</h2>
+                        <div class="meta-chip"><i class="far fa-calendar-alt"></i> ${years}</div>
+                        <div class="meta-chip"><i class="fas fa-pen-nib"></i> ${movement}</div>
+                    </div>
+                    <div class="modal-right">
+                        <h3>Hakkında (turkedebiyati.org)</h3>
+                        <p class="modal-bio">${author.longBio}</p>
+                        <h3>${author.isPoet ? 'Önemli Şiir Kitapları' : 'Önemli Eserleri'}</h3>
+                        <ul class="modal-books">${booksHTML}</ul>
+                    </div>
+                </div>
+            `;
+            elements.modal.classList.add('open'); elements.overlay.classList.add('open');
+        }
+
+        // Günün Sözü 
+        window.loadRandomQuote = () => {
+            if(quotesData.length === 0) return;
+            const randIndex = Math.floor(Math.random() * quotesData.length);
+            const quote = quotesData[randIndex];
+            
+            elements.qText.innerText = `${quote.text}`; 
+            elements.qAuthor.innerText = quote.authorName;
+            elements.qBook.innerText = quote.book ? `(${quote.book})` : '';
+            
+            currentQuoteText = `"${quote.text}" - ${quote.authorName} | MuGöl Edebiyat`;
+        };
+
+        elements.swatches.forEach(swatch => {
+            swatch.addEventListener('click', (e) => {
+                elements.swatches.forEach(s => s.classList.remove('active'));
+                e.target.classList.add('active');
+                elements.captureTarget.style.background = e.target.dataset.bg;
+            });
+        });
+
+        // HTML2Canvas Poster İndirme
+        elements.downloadBtn.addEventListener('click', () => {
+            const btn = elements.downloadBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> İşleniyor...`;
+            
+            html2canvas(elements.captureTarget, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'mugol-edebiyat-poster.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.innerHTML = originalText;
+            }).catch(err => {
+                alert("Resim oluşturulurken bir hata meydana geldi.");
+                btn.innerHTML = originalText;
+            });
+        });
+
+        elements.shareBtn.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'MuGöl Edebiyat',
+                        text: currentQuoteText,
+                        url: window.location.href
+                    });
+                } catch (err) { console.log('Paylaşım iptal edildi.', err); }
+            } else {
+                navigator.clipboard.writeText(currentQuoteText).then(() => {
+                    alert("Söz panoya kopyalandı! İstediğiniz yere yapıştırabilirsiniz.");
+                });
+            }
+        });
+
+        elements.filterItems.forEach(item => {
+            item.addEventListener('click', () => {
+                elements.filterItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                elements.searchInput.value = ""; 
+                displayAuthors(item.dataset.filter);
+            });
+        });
+
+        elements.searchInput.addEventListener('input', (e) => {
+            const currentFilter = document.querySelector('.filter-item.active').dataset.filter;
+            displayAuthors(currentFilter, e.target.value);
+        });
+
+        elements.randomBtn.addEventListener('click', () => {
+            if(authorsData.length === 0) return;
+            const randomAuthor = authorsData[Math.floor(Math.random() * authorsData.length)];
+            openModal(randomAuthor.id);
+        });
+
+        function displayQuotes(searchQuery = "") {
+            const sq = searchQuery.toLocaleLowerCase('tr-TR');
+            const filtered = quotesData.filter(q =>
+                q.text.toLocaleLowerCase('tr-TR').includes(sq) ||
+                q.authorName.toLocaleLowerCase('tr-TR').includes(sq) ||
+                (q.book && q.book.toLocaleLowerCase('tr-TR').includes(sq))
+            );
+            if (filtered.length === 0) {
+                elements.container.innerHTML = `<div class="status-msg"><i class="fas fa-feather"></i> Söz bulunamadı.</div>`;
+                return;
+            }
+            elements.container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+            filtered.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.style.animationDelay = `${i * 0.04}s`;
+                card.innerHTML = `
+                    <div style="background:var(--bg-card);border-radius:16px;padding:2rem 1.8rem 1.2rem;box-shadow:0 4px 20px rgba(27,38,59,0.08);border:1px solid rgba(196,167,125,0.15);animation:fadeUp 0.5s ease backwards;animation-delay:${i*0.04}s;display:flex;flex-direction:column;gap:0.8rem;height:100%;">
+                        <div style="font-size:2rem;color:rgba(196,167,125,0.4);font-family:Georgia,serif;line-height:1;">&ldquo;</div>
+                        <p style="font-family:'Playfair Display',serif;font-style:italic;color:var(--primary);font-size:1rem;line-height:1.7;flex-grow:1;">${q.text}</p>
+                        <div style="border-top:1px solid rgba(196,167,125,0.2);padding-top:0.8rem;">
+                            <div style="font-weight:bold;color:var(--accent);font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;">${q.authorName}</div>
+                            ${q.book ? `<div style="font-size:0.8rem;color:var(--text-light);font-style:italic;">${q.book}</div>` : ''}
+                        </div>
+                        <div style="text-align:center;font-size:0.7rem;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;">MuGöl Edebiyat</div>
+                    </div>`;
+                elements.container.appendChild(card);
+            });
+        }
+
+        function displayBooks(searchQuery = "") {
+            const sq = searchQuery.toLocaleLowerCase('tr-TR');
+            const filtered = booksData.filter(b =>
+                b.title.toLocaleLowerCase('tr-TR').includes(sq) ||
+                b.desc.toLocaleLowerCase('tr-TR').includes(sq) ||
+                (authorsData.find(a => a.id === b.authorId)?.name || '').toLocaleLowerCase('tr-TR').includes(sq)
+            );
+            if (filtered.length === 0) {
+                elements.container.innerHTML = `<div class="status-msg"><i class="fas fa-feather"></i> Kitap bulunamadı.</div>`;
+                return;
+            }
+            filtered.forEach((b, i) => {
+                const author = authorsData.find(a => a.id === b.authorId);
+                const card = document.createElement('div');
+                card.style.animationDelay = `${i * 0.04}s`;
+                card.innerHTML = `
+                    <div style="background:var(--bg-card);border-radius:16px;padding:1.8rem;box-shadow:0 4px 20px rgba(27,38,59,0.08);border:1px solid rgba(196,167,125,0.15);animation:fadeUp 0.5s ease backwards;animation-delay:${i*0.04}s;display:flex;flex-direction:column;gap:0.6rem;height:100%;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span style="background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:12px;font-weight:bold;">${b.year}</span>
+                            <span style="font-size:0.75rem;color:var(--accent);font-style:italic;">${author ? (author.isPoet ? 'Şiir' : 'Roman / Öykü') : ''}</span>
+                        </div>
+                        <h3 style="font-family:'Playfair Display',serif;color:var(--primary);font-size:1.2rem;line-height:1.3;">${b.title}</h3>
+                        ${author ? `<div style="font-size:0.85rem;color:var(--accent);font-weight:bold;cursor:pointer;" onclick="openModal(${author.id})"><i class="fas fa-user-pen" style="margin-right:5px;"></i>${author.name}</div>` : ''}
+                        <p style="font-size:0.9rem;color:var(--text-light);line-height:1.6;flex-grow:1;">${b.desc}</p>
+                        <div style="text-align:center;font-size:0.7rem;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;border-top:1px solid rgba(196,167,125,0.2);padding-top:0.6rem;">MuGöl Edebiyat</div>
+                    </div>`;
+                elements.container.appendChild(card);
+            });
+        }
+
+        // Uygulamayı Başlat
+        function initApp() {
+            displayAuthors('all');
+            loadRandomQuote();
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
