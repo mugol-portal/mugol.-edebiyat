@@ -1,0 +1,27 @@
+const localBooksData = [
+    { "id": 101, "authorId": 1, "title": "Kürk Mantolu Madonna", "year": "1943", "desc": "Raif Efendi'nin Maria Puder'e duyduğu unutulmaz aşk ve içsel yalnızlığı.", "review": "İnceleme: Eser, sadece bir aşk romanı değil, aynı zamanda insanın topluma ve kendine yabancılaşmasını anlatan derin bir psikolojik analizdir. Raif Efendi karakteri üzerinden, dışarıdan sıradan görünen bir insanın iç dünyasındaki devasa fırtınalara şahit oluruz." },
+    { "id": 102, "authorId": 1, "title": "Kuyucaklı Yusuf", "year": "1937", "desc": "Bir Anadolu kasabasındaki yozlaşma ve ezilen köylü sınıfı." },
+    { "id": 103, "authorId": 2, "title": "Suç ve Ceza", "year": "1866", "desc": "Raskolnikov'un işlediği cinayet sonrası çektiği vicdan azabı ve ruhsal çöküşü.", "review": "İnceleme: Dostoyevski, 'olağanüstü insan' teorisiyle cinayet işleyen bir gencin bilinçaltını mikroskop altına alır. Hukuki cezadan çok, vicdanın kestiği cezanın çok daha ağır olduğunu ispatlayan felsefi bir başyapıttır." },
+    { "id": 104, "authorId": 2, "title": "Karamazov Kardeşler", "year": "1880", "desc": "İnanç, şüphe ve ahlak felsefesi üzerine yazılmış bir başyapıt." },
+    { "id": 105, "authorId": 3, "title": "Tutunamayanlar", "year": "1972", "desc": "Turgut Özben'in, intihar eden arkadaşı Selim Işık üzerinden aydınları sorgulaması.", "review": "İnceleme: Türk edebiyatının geleneksel yapısını yıkan bu roman, ironi ve bilinçakışı tekniğiyle burjuva ahlakına ve sahte aydın tipine yöneltilmiş en keskin eleştirilerden biridir." },
+    { "id": 106, "authorId": 4, "title": "Dönüşüm", "year": "1915", "desc": "Gregor Samsa'nın dev bir böceğe dönüşmesi ve ailenin tepkisi." },
+    { "id": 107, "authorId": 5, "title": "Memleketimden İnsan Manzaraları", "year": "1966", "desc": "Anadolu insanının tarihi, sosyal durumu ve destansı panoraması." },
+    { "id": 108, "authorId": 6, "title": "Üvercinka", "year": "1958", "desc": "İkinci Yeni akımının manifestosu niteliğinde, dilin sınırlarını zorlayan şiirler." },
+    { "id": 110, "authorId": 8, "title": "Çiçek Senfonisi", "year": "2008", "desc": "Özdemir Asaf'ın toplu şiirlerini içeren efsanevi derleme kitabı." },
+    { "id": 111, "authorId": 9, "title": "Saatleri Ayarlama Enstitüsü", "year": "1961", "desc": "Doğu ve Batı arasında sıkışmış Türk toplumunun bürokrasi üzerinden muazzam ironisi." },
+    { "id": 112, "authorId": 10, "title": "Kendine Ait Bir Oda", "year": "1929", "desc": "Yazar olmak isteyen kadınlara tavsiyeler içeren feminist manifesto." },
+    { "id": 113, "authorId": 11, "title": "Yüzyıllık Yalnızlık", "year": "1967", "desc": "Buendia ailesinin yedi kuşaklık büyülü, efsanevi hikayesi." },
+    { "id": 114, "authorId": 12, "title": "Garip", "year": "1941", "desc": "Türk şiirindeki uyak ve ölçü geleneklerini yıkan eser." },
+    { "id": 115, "authorId": 13, "title": "1984", "year": "1949", "desc": "Düşüncenin bile suç olduğu distopik bir gelecek tasviri." },
+    { "id": 116, "authorId": 14, "title": "Alemdağ'da Var Bir Yılan", "year": "1954", "desc": "Yalnızlık ve doğa temalı sürrealist öyküler." },
+    { "id": 117, "authorId": 15, "title": "Duvar", "year": "1948", "desc": "Attilâ İlhan'ın özgürlük ve romantik devrimci şiirleri." },
+    { "id": 118, "authorId": 16, "title": "İnce Memed", "year": "1955", "desc": "Çukurova'da zulme başkaldıran eşkıya Memed'in destanı." },
+    { "id": 119, "authorId": 17, "title": "Çalıkuşu", "year": "1922", "desc": "Öğretmen Feride'nin Anadolu'da yaşadığı zorluklar ve idealizmi." },
+    // YENİ YAZARLARIN KİTAPLARI
+    { "id": 120, "authorId": 18, "title": "Mesnevi", "year": "1258-1273", "desc": "6 cilt ve 25.618 beyitten oluşan tasavvufi öğütler, kıssalar ve hikmetler denizi.", "review": "İnceleme: Kuran-ı Kerim'in içsel ve ruhsal tefsiri niteliğinde olan eser, insanoğlunun kâmil (olgun) bir varlık olma yolculuğunu metaforlar, hayvan hikayeleri ve günlük olaylar üzerinden anlatır." },
+    { "id": 121, "authorId": 18, "title": "Divan-ı Kebir", "year": "Bilinmiyor", "desc": "Mevlana'nın Şems-i Tebrizi'ye duyduğu ilahi aşkı anlatan coşkulu şiirler toplamı." },
+    { "id": 122, "authorId": 19, "title": "Risaletü'n-Nushiyye", "year": "1307", "desc": "Yunus Emre'nin mesnevi tarzında yazdığı, 'Nasihatler Kitabı' anlamına gelen ahlak eseri.", "review": "İnceleme: İnsanın içindeki iyi ve kötü huyların (akıl-nefis, kibir-tevazu) savaşını alegorik (sembolik) bir dille anlatan muazzam bir tasavvufi psikoloji metnidir." },
+    { "id": 123, "authorId": 19, "title": "Yunus Emre Divanı", "year": "Derleme", "desc": "Hece ve aruz ölçüsüyle yazılmış, Allah aşkını ve insan sevgisini işleyen şiirler." },
+    { "id": 124, "authorId": 20, "title": "Alacakaranlıktaki Ülke", "year": "1981", "desc": "Genç yaşta Behçet Necatigil Şiir Ödülü'nü kazandığı, ülkenin karanlık günlerini anlatan şiir kitabı.", "review": "İnceleme: 12 Eylül döneminin yarattığı toplumsal travmayı, ölümleri ve kayıpları; şairin kendi içsel kanamalarıyla birleştirerek sunduğu oldukça cesur ve lirik bir eserdir." },
+    { "id": 125, "authorId": 20, "title": "Bugün De Ölmedim Anne", "year": "1982", "desc": "Ölüm, yaşam ve anne figürü ekseninde şekillenen, dönemin efsaneleşmiş şiiri/eseri." }
+];
