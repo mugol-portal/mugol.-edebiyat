@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MuGöl Edebiyat - Türk ve Dünya Edebiyatının ustaları, şairleri ve eserleri.">
+    <title>MuGöl Edebiyat | Kütüphane</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Resim İndirme (Export) için Kütüphane -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #f9f7f3; 
+            --bg-card: #ffffff;
+            --primary: #1b263b; 
+            --primary-light: #415a77;
+            --accent: #c4a77d;  
+            --text-dark: #2b2d42;
+            --text-light: #6c757d;
+            --danger: #d90429;
+            --border-color: rgba(0,0,0,0.05);
+            --shadow-sm: 0 8px 24px rgba(149, 157, 165, 0.1);
+            --shadow-lg: 0 18px 40px rgba(149, 157, 165, 0.2);
+        }
+
+        /* GECE MODU (DARK THEME) DEĞİŞKENLERİ */
+        body.dark-theme {
+            --bg-base: #0f141e;
+            --bg-card: #1c2431;
+            --text-dark: #e0e1dd;
+            --text-light: #9ba4b5;
+            --border-color: rgba(255,255,255,0.05);
+            --shadow-sm: 0 8px 24px rgba(0,0,0,0.3);
+            --shadow-lg: 0 18px 40px rgba(0,0,0,0.5);
+            --primary-light: #778da9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Lora', serif; background-color: var(--bg-base); color: var(--text-dark); line-height: 1.7; overflow-x: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        /* HEADER (YÜKSEKLİĞİ KISALTILDI) */
+        header {
+            background: linear-gradient(rgba(27, 38, 59, 0.92), rgba(27, 38, 59, 0.98)), url('https://www.transparenttextures.com/patterns/stardust.png');
+            color: #fff; text-align: center; padding: 2.5rem 1rem 2rem 1rem; position: relative;
+            border-bottom: 3px solid var(--accent); box-shadow: var(--shadow-lg);
+        }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--accent); letter-spacing: 1px; margin-bottom: 0.3rem; }
+        header p { font-style: italic; font-size: 1.1rem; color: #e0e1dd; margin-bottom: 1.5rem; opacity: 0.9; }
+
+        .search-wrapper { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
+        .search-wrapper input {
+            width: 100%; padding: 14px 20px 14px 45px; border-radius: 30px;
+            border: 1px solid rgba(196, 167, 125, 0.4); background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(5px); color: #fff; font-family: 'Lora', serif; font-size: 1rem;
+            outline: none; transition: 0.3s;
+        }
+        .search-wrapper input::placeholder { color: #a1a1aa; }
+        .search-wrapper input:focus { background: rgba(255,255,255,0.15); border-color: var(--accent); box-shadow: 0 0 15px rgba(196, 167, 125, 0.3); }
+        .search-wrapper i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.1rem; }
+
+        .header-actions { position: absolute; top: 25px; left: 30px; display: flex; gap: 20px; z-index: 5; }
+        .header-actions-right { position: absolute; top: 25px; right: 30px; display: flex; gap: 20px; z-index: 5;}
+        .icon-btn { font-size: 1.6rem; color: var(--accent); cursor: pointer; background: none; border: none; transition: 0.3s; }
+        .icon-btn:hover { color: #fff; transform: scale(1.1); }
+
+        /* SIDEBAR & OVERLAY */
+        .sidebar {
+            position: fixed; top: 0; left: -320px; width: 320px; height: 100vh;
+            background: var(--primary); border-right: 1px solid rgba(196, 167, 125, 0.3);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding-top: 60px; box-shadow: var(--shadow-lg);
+            display: flex; flex-direction: column;
+        }
+        .sidebar.open { left: 0; }
+        .sidebar-title { color: var(--accent); font-family: 'Playfair Display', serif; font-size: 1.8rem; text-align: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(196, 167, 125, 0.2); padding-bottom: 1rem; }
+        .sidebar ul { list-style: none; flex-grow: 1; }
+        .sidebar ul li { padding: 16px 30px; font-family: 'Playfair Display', serif; font-size: 1.15rem; cursor: pointer; color: #e0e1dd; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.3s; display: flex; align-items: center; gap: 15px; }
+        .sidebar ul li i { color: var(--accent); width: 20px; text-align: center; }
+        .sidebar ul li:hover, .sidebar ul li.active { background: rgba(196, 167, 125, 0.1); color: var(--accent); padding-left: 40px; border-left: 4px solid var(--accent); }
+
+        /* İstatistik Bölümü (Menü Altı) */
+        .sidebar-stats { background: rgba(0,0,0,0.2); padding: 1.5rem; border-top: 1px solid rgba(196, 167, 125, 0.2); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
+        .stat-box { display: flex; flex-direction: column; color: #e0e1dd; font-size: 0.85rem; }
+        .stat-box span { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--accent); font-weight: bold; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); z-index: 999; display: none; opacity: 0; transition: 0.4s; }
+        .overlay.open { display: block; opacity: 1; }
+
+        /* QUOTE OF THE DAY (SÖZLER) TASARIMI */
+        .qotd-wrapper { max-width: 900px; margin: 3rem auto 1rem auto; padding: 0 1.5rem; animation: fadeUp 0.6s ease backwards; }
+        .qotd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .qotd-header h2 { font-family: 'Playfair Display', serif; color: var(--text-dark); font-size: 1.8rem; transition: color 0.4s ease; }
+        
+        .qotd-card-capture { 
+            background: linear-gradient(135deg, #1b263b, #415a77); 
+            border-radius: 16px; padding: 3rem; color: #ffffff; box-shadow: var(--shadow-lg); 
+            display: flex; flex-direction: column; justify-content: space-between; min-height: 380px; transition: background 0.5s ease;
+        }
+
+        .quote-icon-solid { font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: block; text-align: left; }
+        .qotd-text { font-family: 'Playfair Display', serif; font-size: 2rem; font-style: italic; line-height: 1.6; text-align: left; flex-grow: 1; }
+
+        .qotd-footer-wrapper { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; border-top: 2px solid rgba(255, 255, 255, 0.15); padding-top: 1.5rem; }
+        .qotd-author-profile { display: flex; align-items: center; gap: 15px; }
+        .q-author-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); background-color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .q-author-info { text-align: left; display: flex; flex-direction: column; justify-content: center; }
+        .qotd-author { font-size: 1.2rem; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; }
+        .qotd-book { font-size: 0.95rem; color: #f8f9fa; margin-top: 5px; font-family: 'Lora', serif; opacity: 0.9;}
+        .qotd-brand-badge { background: var(--accent); color: var(--primary); padding: 8px 16px; border-radius: 30px; font-weight: bold; font-family: 'Lora', serif; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        .qotd-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem; background: var(--bg-card); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: background 0.4s ease; }
+        .color-palette { display: flex; gap: 10px; align-items: center;}
+        .color-palette span { font-size: 0.9rem; color: var(--text-light); font-weight: bold; margin-right: 5px; }
+        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .color-swatch:hover, .color-swatch.active { border-color: var(--accent); transform: scale(1.1); }
+        .action-btns { display: flex; gap: 10px; }
+        .btn-action { background: transparent; border: 1px solid var(--accent); color: var(--text-dark); padding: 0.6rem 1.2rem; border-radius: 30px; font-family: 'Lora', serif; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-action:hover { background: var(--accent); color: var(--primary); }
+
+        /* CARDS */
+        .container { max-width: 1300px; margin: 2rem auto 4rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 3rem; min-height: 50vh; }
+        
+        .card { background: var(--bg-card); border-radius: 16px; padding: 3rem 2rem 2rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; box-shadow: var(--shadow-sm); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); animation: fadeUp 0.6s ease backwards; border: 1px solid var(--border-color); margin-top: 40px; }
+        .card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: rgba(196, 167, 125, 0.3); }
+
+        .author-img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; position: absolute; top: -45px; left: 50%; transform: translateX(-50%); border: 4px solid var(--bg-card); box-shadow: 0 5px 15px rgba(0,0,0,0.15); background: var(--primary); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-family: 'Playfair Display', serif; transition: transform 0.4s ease, border-color 0.4s ease; }
+        .card:hover .author-img { transform: translateX(-50%) scale(1.08); border-color: var(--accent); }
+
+        .fav-btn { position: absolute; top: 15px; right: 15px; font-size: 1.4rem; color: #dee2e6; cursor: pointer; transition: 0.3s; background: none; border: none; }
+        .fav-btn.active { color: var(--danger); }
+        .fav-btn:hover { transform: scale(1.15); }
+        body.dark-theme .fav-btn { color: #415a77; }
+        body.dark-theme .fav-btn.active { color: #e63946; }
+
+        .author-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--text-dark); margin-top: 0.5rem; transition: color 0.4s ease;}
+        .author-meta { font-size: 0.8rem; color: var(--accent); font-weight: bold; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .author-meta span { color: var(--text-light); margin: 0 5px; }
+
+        .bio-short { color: var(--text-light); font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1; }
+        .quote { padding: 1rem; font-style: italic; color: var(--primary-light); background: var(--bg-base); border-radius: 8px; font-size: 0.95rem; width: 100%; margin-bottom: 1.5rem; border-left: 3px solid var(--accent); transition: background 0.4s ease; }
+
+        .btn-detail { background: transparent; color: var(--text-dark); border: 1px solid var(--text-dark); padding: 0.7rem; width: 100%; font-family: 'Playfair Display', serif; font-size: 1.05rem; cursor: pointer; border-radius: 30px; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-detail:hover { background: var(--text-dark); color: var(--bg-card); border-color: transparent; }
+
+        /* MODAL */
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--bg-card); width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto; border-radius: 16px; z-index: 1002; display: none; opacity: 0; box-shadow: 0 25px 50px rgba(0,0,0,0.5); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid var(--border-color); }
+        .modal.open { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 2.2rem; cursor: pointer; color: #fff; z-index: 10; transition: 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
+        .close-modal:hover { color: var(--danger); transform: rotate(90deg); }
+
+        .modal-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
+        .modal-left { background: var(--primary); color: #fff; padding: 3rem 2rem; text-align: center; border-radius: 16px 0 0 16px; position: relative;}
+        .modal-left img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); margin-bottom: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .modal-left h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .modal-left .meta-chip { display: inline-block; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; margin: 4px; border: 1px solid rgba(196, 167, 125, 0.3); }
+        
+        .modal-right { padding: 3rem 2.5rem; background: var(--bg-card); border-radius: 0 16px 16px 0;}
+        .modal-bio { font-size: 1.05rem; color: var(--text-dark); margin-bottom: 2rem; line-height: 1.8; text-align: justify; }
+        .modal-right h3 { font-family: 'Playfair Display', serif; color: var(--text-dark); font-size: 1.4rem; border-bottom: 2px solid var(--bg-base); padding-bottom: 0.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .modal-right h3 i { color: var(--accent); font-size: 1.1rem;}
+        
+        .modal-books { list-style: none; display: grid; gap: 1rem; }
+        .modal-books li { background: var(--bg-base); padding: 1.2rem; border-radius: 8px; border-left: 4px solid var(--accent); display: flex; flex-direction: column; transition: background 0.3s ease;}
+        .book-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;}
+        .book-header strong { color: var(--text-dark); font-family: 'Playfair Display', serif; font-size: 1.15rem; }
+        .book-year { background: var(--primary); color: #fff; font-size: 0.8rem; padding: 3px 10px; border-radius: 12px; font-weight: bold;}
+
+        /* TOAST BİLDİRİMİ */
+        .toast { position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--primary); padding: 12px 24px; border-radius: 30px; font-weight: 600; font-family: 'Lora', serif; font-size: 0.95rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s; z-index: 9999; opacity: 0; display: flex; align-items: center; gap: 10px; }
+        .toast.show { bottom: 30px; opacity: 1; }
+
+        /* YUKARI ÇIK BUTONU */
+        .scroll-top-btn { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: var(--primary); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 2px solid var(--accent); cursor: pointer; box-shadow: var(--shadow-lg); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 900; }
+        .scroll-top-btn.visible { opacity: 1; visibility: visible; }
+        .scroll-top-btn:hover { background: var(--accent); color: var(--primary); transform: translateY(-5px); }
+
+        /* FOOTER */
+        footer { background: var(--primary); color: #a1a1aa; text-align: center; padding: 2rem; margin-top: 4rem; border-top: 3px solid var(--accent); font-size: 0.95rem;}
+
+        .status-msg { text-align: center; grid-column: 1 / -1; font-size: 1.1rem; font-style: italic; color: var(--text-light); padding: 3rem; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color);}
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 768px) { 
+            header { padding: 2rem 1rem 1.5rem 1rem; }
+            header h1 { font-size: 2.2rem; } 
+            .search-wrapper input { padding: 12px 20px 12px 40px; font-size: 0.95rem; }
+            .header-actions { top: 15px; left: 15px; }
+            .header-actions-right { top: 15px; right: 15px; }
+            .qotd-card-capture { padding: 2rem; min-height: 320px; }
+            .qotd-text { font-size: 1.5rem; }
+            .qotd-footer-wrapper { flex-direction: column; align-items: flex-start; gap: 20px; }
+            .qotd-brand-badge { align-self: flex-end; }
+            .modal-grid { grid-template-columns: 1fr; } 
+            .modal-left { border-radius: 16px 16px 0 0; padding: 2rem; } 
+            .modal-right { border-radius: 0 0 16px 16px; padding: 2rem 1.5rem; } 
+            .close-modal { color: var(--accent); top: 10px; right: 15px;}
+            .book-header { flex-direction: column; align-items: flex-start; gap: 5px;}
+            .qotd-controls { justify-content: center; }
+            .scroll-top-btn { bottom: 20px; right: 20px; width: 40px; height: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-actions">
+            <button class="icon-btn" id="menuToggle" title="Kategoriler"><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="header-actions-right">
+            <!-- Gece/Gündüz Modu Butonu Eklendi (Zar Yerine) -->
+            <button class="icon-btn" id="themeToggle" title="Temayı Değiştir"><i class="fas fa-moon"></i></button>
+        </div>
+        
+        <h1>MuGöl Edebiyat</h1>
+        <p>Kelimelerin İzinde, İnsanlığın Özüne Yolculuk</p>
+        
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Yazar, şair veya kategori ara..." autocomplete="off">
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-title">Kütüphane</div>
+        <ul>
+            <li class="filter-item active" data-filter="all"><i class="fas fa-book-open"></i> Tüm Eserler</li>
+            <li class="filter-item" data-filter="turk"><i class="fas fa-map-marker-alt"></i> Türk Edebiyatı</li>
+            <li class="filter-item" data-filter="dunya"><i class="fas fa-globe"></i> Dünya Edebiyatı</li>
+            <li class="filter-item" data-filter="sairler"><i class="fas fa-feather-alt"></i> Şairler</li>
+            <li class="filter-item" data-filter="favoriler"><i class="fas fa-heart"></i> Favorilerim</li>
+            <li class="filter-item" data-filter="sozler"><i class="fas fa-quote-right"></i> İlham Veren Sözler</li>
+        </ul>
+        <!-- YENİ: İstatistik Bölümü -->
+        <div class="sidebar-stats">
+            <div class="stat-box"><span id="statAuthors">0</span> Yazar</div>
+            <div class="stat-box"><span id="statBooks">0</span> Eser</div>
+        </div>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- SÖZLER BÖLÜMÜ -->
+    <section class="qotd-wrapper" id="qotdSection" style="display: none;">
+        <div class="qotd-header">
+            <h2><i class="fas fa-quote-left" style="color: var(--accent);"></i> İlham Veren Söz</h2>
+            <button class="btn-action" onclick="loadRandomQuote()" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" title="Başka Söz Getir"><i class="fas fa-sync-alt"></i> Yenile</button>
+        </div>
+        
+        <div class="qotd-card-capture" id="captureTarget">
+            <div class="qotd-content">
+                <i class="fas fa-quote-left quote-icon-solid"></i>
+                <div class="qotd-text" id="qText">"Yükleniyor..."</div>
+            </div>
+            
+            <div class="qotd-footer-wrapper">
+                <div class="qotd-author-profile">
+                    <img src="" alt="Yazar" id="qAuthorImg" class="q-author-img">
+                    <div class="q-author-info">
+                        <div class="qotd-author" id="qAuthor">-</div>
+                        <div class="qotd-book" id="qBook"></div>
+                    </div>
+                </div>
+                <div class="qotd-brand-badge">
+                    <i class="fas fa-feather-alt"></i> MuGöl Edebiyat
+                </div>
+            </div>
+        </div>
+
+        <div class="qotd-controls">
+            <div class="color-palette">
+                <span>Arka Plan:</span>
+                <div class="color-swatch active" style="background: linear-gradient(135deg, #1b263b, #415a77);" data-bg="linear-gradient(135deg, #1b263b, #415a77)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #2b2d42, #8d99ae);" data-bg="linear-gradient(135deg, #2b2d42, #8d99ae)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #386641, #a7c957);" data-bg="linear-gradient(135deg, #386641, #a7c957)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #603808, #c4a77d);" data-bg="linear-gradient(135deg, #603808, #c4a77d)"></div>
+                <div class="color-swatch" style="background: linear-gradient(135deg, #641220, #a01a58);" data-bg="linear-gradient(135deg, #641220, #a01a58)"></div>
+            </div>
+            <div class="action-btns">
+                <button class="btn-action" id="downloadBtn"><i class="fas fa-download"></i> İndir</button>
+                <button class="btn-action" id="shareBtn"><i class="fas fa-share-alt"></i> Paylaş</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- YAZARLAR BÖLÜMÜ -->
+    <main class="container" id="author-container">
+        <div class="status-msg"><i class="fas fa-spinner fa-spin"></i> Kütüphane rafları düzenleniyor...</div>
+    </main>
+
+    <!-- MODAL -->
+    <div class="modal" id="authorModal">
+        <span class="close-modal" id="closeModal" title="Kapat">&times;</span>
+        <div id="modalContent"></div>
+    </div>
+
+    <!-- TOAST BİLDİRİMİ -->
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">İşlem başarılı</span></div>
+
+    <!-- YUKARI ÇIK BUTONU -->
+    <button class="scroll-top-btn" id="scrollTopBtn" title="Yukarı Çık"><i class="fas fa-chevron-up"></i></button>
+
+    <footer>
+        <p>&copy; <span id="year"></span> MuGöl Edebiyat Uygulaması. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script>
+        const elements = {
+            menuToggle: document.getElementById('menuToggle'),
+            themeToggle: document.getElementById('themeToggle'),
+            sidebar: document.getElementById('sidebar'),
+            overlay: document.getElementById('overlay'),
+            container: document.getElementById('author-container'),
+            qotdSection: document.getElementById('qotdSection'),
+            filterItems: document.querySelectorAll('.filter-item'),
+            modal: document.getElementById('authorModal'),
+            modalContent: document.getElementById('modalContent'),
+            closeModal: document.getElementById('closeModal'),
+            searchInput: document.getElementById('searchInput'),
+            year: document.getElementById('year'),
+            
+            // Söz Elemanları
+            qText: document.getElementById('qText'),
+            qAuthor: document.getElementById('qAuthor'),
+            qBook: document.getElementById('qBook'),
+            qAuthorImg: document.getElementById('qAuthorImg'),
+            captureTarget: document.getElementById('captureTarget'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            shareBtn: document.getElementById('shareBtn'),
+            swatches: document.querySelectorAll('.color-swatch'),
+
+            // Yeni Özellikler
+            toast: document.getElementById('toast'),
+            toastMsg: document.getElementById('toastMsg'),
+            scrollTopBtn: document.getElementById('scrollTopBtn'),
+            statAuthors: document.getElementById('statAuthors'),
+            statBooks: document.getElementById('statBooks')
+        };
+
+        elements.year.textContent = new Date().getFullYear();
+
+        let authorsData = [];
+        let booksData = [];
+        let quotesData = [];
+        let favorites = JSON.parse(localStorage.getItem('mugolFavorites')) || [];
+        let currentQuoteText = ""; 
+        let toastTimeout;
+
+        // GECE MODU MANTIĞI
+        const currentTheme = localStorage.getItem('mugolTheme');
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+            elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        elements.themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            let isDark = document.body.classList.contains('dark-theme');
+            elements.themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('mugolTheme', isDark ? 'dark' : 'light');
+        });
+
+        // TOAST BİLDİRİM FONKSİYONU
+        const showToast = (msg, icon = 'fa-check-circle') => {
+            clearTimeout(toastTimeout);
+            elements.toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
+            elements.toast.classList.add('show');
+            toastTimeout = setTimeout(() => { elements.toast.classList.remove('show'); }, 3000);
+        };
+
+        // YUKARI ÇIK BUTONU MANTIĞI
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) elements.scrollTopBtn.classList.add('visible');
+            else elements.scrollTopBtn.classList.remove('visible');
+        });
+        elements.scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Menü ve Modal Kapatma
+        const toggleMenu = () => { elements.sidebar.classList.toggle('open'); elements.overlay.classList.toggle('open'); }
+        const closeModalFunc = () => { elements.modal.classList.remove('open'); elements.overlay.classList.remove('open'); }
+        
+        elements.menuToggle.addEventListener('click', toggleMenu);
+        elements.overlay.addEventListener('click', () => { elements.sidebar.classList.remove('open'); closeModalFunc(); });
+        elements.closeModal.addEventListener('click', closeModalFunc);
+
+        // Verileri Çek
+        async function fetchLibraryData() {
+            try {
+                const [authorsRes, booksRes, quotesRes] = await Promise.all([
+                    fetch('authors.json'), 
+                    fetch('books.json'),
+                    fetch('quotes.json')
+                ]);
+                
+                if (!authorsRes.ok || !booksRes.ok || !quotesRes.ok) throw new Error("JSON files missing.");
+                
+                authorsData = await authorsRes.json();
+                booksData = await booksRes.json();
+                quotesData = await quotesRes.json();
+                
+                // İstatistikleri Doldur
+                elements.statAuthors.innerText = authorsData.length;
+                elements.statBooks.innerText = booksData.length;
+
+                displayAuthors('all');
+                loadRandomQuote(); 
+
+            } catch (error) {
+                elements.container.innerHTML = `<div class="status-msg" style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Hata: Veri dosyaları (JSON) yüklenemedi. 'Live Server' kullandığınızdan emin olun veya veritabanı dosyalarını kontrol edin.</div>`;
+                console.error(error);
+            }
+        }
+
+        const getInitials = name => name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const getInitialsSVG = (name) => {
+            const initials = getInitials(name);
+            return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='70' height='70'><rect width='70' height='70' fill='%231b263b'/><text x='50%' y='50%' fill='%23c4a77d' font-size='26' font-family='serif' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>${initials}</text></svg>`;
+        }
+
+        window.toggleFavorite = (id, btnElement) => {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+                btnElement.classList.remove('active');
+                showToast('Favorilerden çıkarıldı', 'fa-heart-broken');
+            } else {
+                favorites.push(id);
+                btnElement.classList.add('active');
+                showToast('Favorilere eklendi', 'fa-heart');
+            }
+            localStorage.setItem('mugolFavorites', JSON.stringify(favorites));
+            
+            const currentFilter = document.querySelector('.filter-item.active').dataset.filter;
+            if(currentFilter === 'favoriler') displayAuthors('favoriler');
+        }
+
+        // Yazarları Listele
+        function displayAuthors(filterType, searchQuery = "") {
+            elements.container.innerHTML = ''; 
+            
+            let filtered = authorsData.filter(author => {
+                let matchFilter = true;
+                if (filterType === 'turk' || filterType === 'dunya') matchFilter = author.category === filterType;
+                if (filterType === 'sairler') matchFilter = author.isPoet === true;
+                if (filterType === 'favoriler') matchFilter = favorites.includes(author.id);
+                
+                let searchLower = searchQuery.toLocaleLowerCase('tr-TR');
+                let nameMatch = author.name.toLocaleLowerCase('tr-TR').includes(searchLower);
+                let catMatch = author.category ? author.category.toLocaleLowerCase('tr-TR').includes(searchLower) : false;
+                
+                return matchFilter && (nameMatch || catMatch);
+            });
+
+            if (filtered.length === 0) {
+                elements.container.innerHTML = `<div class="status-msg"><i class="fas fa-feather"></i> Aradığınız kriterlerde eser veya yazar bulunamadı.</div>`;
+            } else {
+                filtered.forEach((author, index) => {
+                    const isFav = favorites.includes(author.id) ? 'active' : '';
+                    const years = author.years || "Bilinmiyor";
+                    const movement = author.movement || "Edebiyat";
+                    const imageHTML = `<img src="${author.image || ''}" class="author-img" alt="${author.name}" onerror="this.outerHTML='<div class=\\'author-img\\'>${getInitials(author.name)}</div>'">`;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.animationDelay = `${index * 0.05}s`;
+                    card.innerHTML = `
+                        ${imageHTML}
+                        <button class="fav-btn ${isFav}" onclick="toggleFavorite(${author.id}, this)" title="Favori"><i class="fas fa-heart"></i></button>
+                        
+                        <h2 class="author-name">${author.name}</h2>
+                        <div class="author-meta">${years} <span>|</span> ${movement}</div>
+                        
+                        <p class="bio-short">${author.shortBio}</p>
+                        <div class="quote">"${author.quote}"</div>
+                        
+                        <button class="btn-detail" onclick="openModal(${author.id})"><i class="fas fa-book-reader"></i> Eserleri İncele</button>
+                    `;
+                    elements.container.appendChild(card);
+                });
+            }
+
+            if(window.innerWidth < 768 && elements.sidebar.classList.contains('open')) {
+                elements.sidebar.classList.remove('open');
+                elements.overlay.classList.remove('open');
+            }
+        }
+
+        // Yazar Detay Modalı
+        window.openModal = (authorId) => {
+            const author = authorsData.find(a => a.id === authorId);
+            const authorBooks = booksData.filter(b => b.authorId === authorId);
+
+            let booksHTML = authorBooks.length > 0 
+                ? authorBooks.map(b => `
+                    <li>
+                        <div class="book-header">
+                            <strong>${b.title}</strong>
+                            <span class="book-year">${b.year}</span>
+                        </div>
+                        <span style="font-size: 0.95rem;">${b.desc}</span>
+                    </li>`).join('') 
+                : "<li>Henüz eser eklenmedi.</li>";
+
+            const years = author.years || "Bilinmiyor";
+            const movement = author.movement || "Edebiyat";
+            const imageFallback = `onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'><rect width=\\'150\\' height=\\'150\\' fill=\\'%231b263b\\'/><text x=\\'50%\\' y=\\'50%\\' fill=\\'%23c4a77d\\' font-size=\\'40\\' font-family=\\'serif\\' font-weight=\\'bold\\' text-anchor=\\'middle\\' dominant-baseline=\\'middle\\'>${getInitials(author.name)}</text></svg>'"`;
+
+            elements.modalContent.innerHTML = `
+                <div class="modal-grid">
+                    <div class="modal-left">
+                        <img src="${author.image || ''}" alt="${author.name}" ${imageFallback}>
+                        <h2 style="color:#fff;">${author.name}</h2>
+                        <div class="meta-chip"><i class="far fa-calendar-alt"></i> ${years}</div>
+                        <div class="meta-chip"><i class="fas fa-pen-nib"></i> ${movement}</div>
+                    </div>
+                    <div class="modal-right">
+                        <h3><i class="fas fa-info-circle"></i> Hakkında</h3>
+                        <p class="modal-bio">${author.longBio}</p>
+                        <h3><i class="fas fa-book"></i> ${author.isPoet ? 'Önemli Şiir Kitapları' : 'Önemli Eserleri'}</h3>
+                        <ul class="modal-books">${booksHTML}</ul>
+                    </div>
+                </div>
+            `;
+            elements.modal.classList.add('open'); elements.overlay.classList.add('open');
+        }
+
+        /* ----- GÜNÜN SÖZÜ MANTIĞI ----- */
+        window.loadRandomQuote = () => {
+            if(quotesData.length === 0) return;
+            const randIndex = Math.floor(Math.random() * quotesData.length);
+            const quote = quotesData[randIndex];
+            
+            elements.qText.innerText = `"${quote.text}"`;
+            elements.qAuthor.innerText = quote.authorName; 
+            elements.qBook.innerText = quote.book ? quote.book : '';
+            
+            const authorData = authorsData.find(a => a.name === quote.authorName);
+            if(authorData && authorData.image) elements.qAuthorImg.src = authorData.image;
+            else elements.qAuthorImg.src = getInitialsSVG(quote.authorName);
+            
+            elements.qAuthorImg.onerror = function() { this.src = getInitialsSVG(quote.authorName); };
+
+            currentQuoteText = `"${quote.text}" - ${quote.authorName} | MuGöl Edebiyat`;
+        };
+
+        elements.swatches.forEach(swatch => {
+            swatch.addEventListener('click', (e) => {
+                elements.swatches.forEach(s => s.classList.remove('active'));
+                e.target.classList.add('active');
+                elements.captureTarget.style.background = e.target.dataset.bg;
+            });
+        });
+
+        // HTML2Canvas ile Resmi İndirme
+        elements.downloadBtn.addEventListener('click', () => {
+            const btn = elements.downloadBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor...`;
+            
+            html2canvas(elements.captureTarget, { 
+                scale: 2, 
+                backgroundColor: null,
+                useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'mugol-edebiyat-soz.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.innerHTML = originalText;
+                showToast("Söz kartı indirildi!", "fa-download");
+            }).catch(err => {
+                console.error("İndirme Hatası:", err);
+                showToast("İndirme sırasında hata oluştu.", "fa-exclamation-triangle");
+                btn.innerHTML = originalText;
+            });
+        });
+
+        // Paylaşım (Kopyalama veya Web Share)
+        elements.shareBtn.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: 'MuGöl Edebiyat', text: currentQuoteText, url: window.location.href });
+                } catch (err) { console.log('Paylaşım iptal edildi.', err); }
+            } else {
+                navigator.clipboard.writeText(currentQuoteText).then(() => {
+                    showToast("Söz panoya kopyalandı!", "fa-copy");
+                });
+            }
+        });
+
+        // Menü Filtreleme İşlemleri
+        elements.filterItems.forEach(item => {
+            item.addEventListener('click', () => {
+                elements.filterItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                elements.searchInput.value = ""; 
+                
+                const filterType = item.dataset.filter;
+
+                if (filterType === 'sozler') {
+                    elements.container.style.display = 'none';
+                    elements.qotdSection.style.display = 'block';
+                    loadRandomQuote(); 
+                    
+                    if(window.innerWidth < 768) {
+                        elements.sidebar.classList.remove('open');
+                        elements.overlay.classList.remove('open');
+                    }
+                } else {
+                    elements.qotdSection.style.display = 'none';
+                    elements.container.style.display = 'grid';
+                    displayAuthors(filterType);
+                }
+            });
+        });
+
+        // Arama (Arama yapınca Sözler menüsünden çıkış yapar)
+        elements.searchInput.addEventListener('input', (e) => {
+            let currentFilter = document.querySelector('.filter-item.active').dataset.filter;
+            if (currentFilter === 'sozler') {
+                elements.filterItems.forEach(i => i.classList.remove('active'));
+                document.querySelector('.filter-item[data-filter="all"]').classList.add('active');
+                currentFilter = 'all';
+                elements.qotdSection.style.display = 'none';
+                elements.container.style.display = 'grid';
+            }
+            displayAuthors(currentFilter, e.target.value);
+        });
+
+        // Başlat
+        fetchLibraryData();
+    </script>
+</body>
+</html>
