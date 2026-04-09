@@ -185,7 +185,7 @@
         .qotd-card-capture { 
             background: linear-gradient(135deg, #2b3a55, #1b263b); 
             border-radius: 16px; 
-            padding: 1.5rem; /* Sözlere daha fazla alan açıldı */
+            padding: 1.5rem; 
             color: #ffffff; 
             display: flex; 
             flex-direction: column; 
@@ -203,7 +203,7 @@
             overflow: hidden; 
         }
 
-        /* Virgül FontAwesome'in orjinal haliyle sorunsuz çalışır */
+        /* Virgül FontAwesome */
         .quote-icon-large { 
             font-size: 1.8rem; 
             color: rgba(255, 255, 255, 0.2); 
@@ -223,7 +223,6 @@
         .qotd-bottom-section { flex-shrink: 0; width: 100%; margin-top: 5px; }
         .qotd-divider { border: 0; height: 1px; background: rgba(255,255,255,0.2); margin-bottom: 12px; }
         
-        /* DİKEY SIRALAMA: Fotoğraf solda, Yazar ve Kitap sağda */
         .qotd-author-block { 
             display: flex; 
             align-items: center; 
@@ -231,17 +230,21 @@
             margin-bottom: 12px;
         }
 
-        /* Resim boyutu küçüldü */
+        /* YAZAR RESMİ - KUSURSUZ YUVARLAK İÇİN BOZULMAYI ÖNLEYEN YAPI */
         .q-author-img { 
             width: 45px; 
             height: 45px; 
+            min-width: 45px; /* Flexbox esnemesini engeller */
+            max-width: 45px; 
+            min-height: 45px; /* Flexbox basıklığını engeller */
+            max-height: 45px;
             border-radius: 50%; 
             border: 2px solid #fff; 
             object-fit: cover; 
             flex-shrink: 0; 
+            display: block;
         }
 
-        /* Yazar ve kitap alt alta */
         .qotd-author-text {
             display: flex;
             flex-direction: column;
@@ -249,18 +252,15 @@
             gap: 2px;
         }
         
-        /* Yazı boyutları küçüldü */
         .qotd-author-name { font-size: 0.95rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;}
         .qotd-book-name { color: #cbd5e1; font-size: 0.8rem; font-weight: 400; line-height: 1.2;}
         
-        /* Marka tam ortada */
         .qotd-brand-container {
             display: flex;
             justify-content: center;
             width: 100%;
         }
 
-        /* Marka yazısı küçüldü */
         .qotd-brand { 
             background: rgba(255,255,255,0.15); 
             padding: 4px 12px; 
