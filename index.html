@@ -124,6 +124,32 @@
 
         .quote-grid, .book-grid, .poem-grid { display: none; } 
         
+        /* SÖZLER İÇİN YAZAR FİLTRE DESTEĞİ */
+        .quote-filter-wrapper { grid-column: 1 / -1; display: flex; justify-content: center; margin-bottom: 15px; }
+        .quote-filter-select { 
+            padding: 12px 40px 12px 20px; 
+            border-radius: 30px; 
+            border: 2px solid var(--accent); 
+            background-color: var(--bg-card); 
+            color: var(--text-dark); 
+            font-size: 1.05rem; 
+            font-family: 'Nunito', sans-serif; 
+            cursor: pointer; 
+            outline: none; 
+            transition: 0.3s; 
+            min-width: 280px; 
+            font-weight: 700; 
+            box-shadow: var(--shadow-sm); 
+            appearance: none; 
+            -webkit-appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c4a77d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
+            background-repeat: no-repeat; 
+            background-position: right 15px center; 
+            background-size: 18px; 
+        }
+        .quote-filter-select:hover, .quote-filter-select:focus { border-color: var(--primary); }
+        [data-theme="dark"] .quote-filter-select:hover, [data-theme="dark"] .quote-filter-select:focus { border-color: #fff; }
+
         .poem-card { background: var(--bg-card); border-radius: var(--border-radius); padding: 2.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; transition: 0.3s; }
         .poem-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow-hover);}
         .poem-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem; }
@@ -190,71 +216,110 @@
             border-radius: 20px;
         }
 
-        /* TAM YUVARLAK KART TASARIMI */
+        /* TAŞMA VE KAYMA DÜZELTİLDİ: PADDING KISILDI */
         .qotd-card-capture { 
-            background: linear-gradient(135deg, #2b3a55, #1b263b); 
-            border-radius: 50%; /* Çerçeve tamamen yuvarlak */
-            padding: 16%; /* Metinlerin dışarı taşmasını engeller */
+            background: linear-gradient(135deg, #148074, #0a524a); 
+            border-radius: 20px; 
+            padding: 2rem; /* Dışarı taşmayı önlemek için 2.5rem'den 2rem'e düşürüldü */
             color: #ffffff; 
             display: flex; 
             flex-direction: column; 
             aspect-ratio: 1 / 1; 
             position: relative;
             overflow: hidden;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            justify-content: space-between;
+            text-align: left;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-
-        /* Yuvarlak Kart İçindeki Logo (Üst Merkez) */
-        .quote-card-logo {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 25px;
-            width: auto;
-            opacity: 0.85;
-            z-index: 2;
         }
 
         .qotd-content-wrapper {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             width: 100%;
+            flex-grow: 1;
+            justify-content: center;
+            min-height: 0; /* Esneklik için kritik */
+            overflow: hidden; /* TAŞMAYI ENGELLER */
         }
 
         .quote-icon-large { 
-            font-size: 1.6rem; 
-            color: rgba(255, 255, 255, 0.2); 
-            margin-bottom: 8px; 
+            font-size: 2.8rem; /* İkon metne uyumlu hale getirildi */
+            color: rgba(255, 255, 255, 0.15); 
+            margin-bottom: 5px; /* Metne daha yakın */
             flex-shrink: 0; 
         }
         
         .qotd-text { 
-            font-size: 1.8rem; 
+            font-size: 2.4rem; /* Başlangıç boyutu optimize edildi */
             font-style: italic; 
-            font-weight: 700; 
+            font-weight: 800; 
             line-height: 1.35; 
             color: #fff; 
-            margin-bottom: 15px; 
+            margin-bottom: 0; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: 100%; /* Genişliği sabitledik */
         }
         
-        .qotd-author-block { 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center;
+        .qotd-divider {
             width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 10px 0 15px 0; /* Alt kısım ile daha dengeli boşluk */
         }
 
-        .qotd-author-text { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .qotd-author-name { font-size: 0.95rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;}
-        .qotd-book-name { color: #cbd5e1; font-size: 0.8rem; font-weight: 400; line-height: 1.2;}
+        .qotd-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            width: 100%;
+            gap: 12px; /* Rozet ile yazar arasındaki mesafe kısaldı */
+        }
+
+        .qotd-author-block { 
+            display: flex; 
+            flex-direction: row;
+            align-items: center; 
+            justify-content: flex-start;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .qotd-author-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: #1b263b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c4a77d;
+            font-size: 1.2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .qotd-author-text { display: flex; flex-direction: column; align-items: flex-start; }
+        .qotd-author-name { font-size: 0.95rem; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;}
+        .qotd-book-name { color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-weight: 400; line-height: 1.2; margin-top: 2px;}
         
+        .qotd-brand-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px; /* Kesilmeyi engellemek için güvenlik payı */
+        }
+
         .qotd-controls { margin-top: 1.5rem; text-align: center;}
         .palette-title { color: #f8fafc; font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; }
         .color-palette { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;}
@@ -333,22 +398,29 @@
         </div>
         
         <div class="qotd-card-capture" id="captureTarget">
-            
-            <img src="logo.png" class="quote-card-logo" alt="MuGöl" onerror="this.style.display='none'">
-
-            <!-- İçerik -->
+            <!-- Üst İçerik: Tırnak ve Metin -->
             <div class="qotd-content-wrapper" id="qContentWrapper">
                 <i class="fas fa-quote-left quote-icon-large"></i>
                 <div class="qotd-text" id="qText">"Yükleniyor..."</div>
-                
-                <div class="qotd-author-block">
-                    <div class="qotd-author-text">
-                        <div id="qAuthor" class="qotd-author-name">-</div>
-                        <div id="qBook" class="qotd-book-name"></div>
+            </div>
+            
+            <!-- Alt İçerik: Çizgi, Yazar Bilgisi ve Badge -->
+            <div style="width: 100%;">
+                <div class="qotd-divider"></div>
+                <div class="qotd-footer">
+                    <div class="qotd-author-block">
+                        <img id="qAuthorImg" src="" alt="Yazar" class="qotd-author-img">
+                        <div class="qotd-author-text">
+                            <div id="qAuthor" class="qotd-author-name">-</div>
+                            <div id="qBook" class="qotd-book-name"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="qotd-brand-badge">
+                        <i class="fas fa-feather-alt"></i> MuGöl Edebiyat
                     </div>
                 </div>
             </div>
-            
         </div>
 
         <div class="qotd-controls">
@@ -388,6 +460,8 @@
         
         let favorites = JSON.parse(localStorage.getItem('mugolFavorites')) || [];
         let currentTab = "all"; 
+        
+        let currentQuoteAuthorFilter = "all";
 
         if (localStorage.getItem('mugolTheme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -526,7 +600,45 @@
             hideAllContainers(); elements.quoteContainer.style.display = 'grid';
             elements.quoteContainer.innerHTML = ''; 
             
-            let filtered = quotesData.filter(q => q.text.toLocaleLowerCase('tr-TR').includes(searchQuery.toLocaleLowerCase('tr-TR')));
+            const quoteAuthors = [...new Set(quotesData.map(q => q.authorName))].sort((a, b) => a.localeCompare(b, 'tr-TR'));
+            
+            const filterWrapper = document.createElement('div');
+            filterWrapper.className = 'quote-filter-wrapper';
+            
+            const filterSelect = document.createElement('select');
+            filterSelect.className = 'quote-filter-select';
+            
+            const allOption = document.createElement('option');
+            allOption.value = "all";
+            allOption.textContent = "Tüm Yazarların Sözleri";
+            filterSelect.appendChild(allOption);
+            
+            quoteAuthors.forEach(author => {
+                const opt = document.createElement('option');
+                opt.value = author;
+                opt.textContent = author;
+                if (author === currentQuoteAuthorFilter) opt.selected = true;
+                filterSelect.appendChild(opt);
+            });
+            
+            filterSelect.addEventListener('change', (e) => {
+                currentQuoteAuthorFilter = e.target.value;
+                displayQuotes(elements.searchInput.value);
+            });
+            
+            filterWrapper.appendChild(filterSelect);
+            elements.quoteContainer.appendChild(filterWrapper);
+
+            let filtered = quotesData.filter(q => {
+                let matchSearch = q.text.toLocaleLowerCase('tr-TR').includes(searchQuery.toLocaleLowerCase('tr-TR')) || q.authorName.toLocaleLowerCase('tr-TR').includes(searchQuery.toLocaleLowerCase('tr-TR'));
+                let matchAuthor = (currentQuoteAuthorFilter === "all") || (q.authorName === currentQuoteAuthorFilter);
+                return matchSearch && matchAuthor;
+            });
+
+            if (filtered.length === 0) {
+                elements.quoteContainer.insertAdjacentHTML('beforeend', `<p style='grid-column:1/-1; text-align:center; color:var(--text-light); margin-top:20px; font-weight:600;'>Aradığınız kriterlere uygun söz bulunamadı.</p>`);
+            }
+
             filtered.forEach(quote => {
                 const qCard = document.createElement('div');
                 qCard.className = 'q-card';
@@ -537,7 +649,7 @@
                     </div>
                     <div class="q-card-actions">
                         <button class="btn-q-action" onclick="openQuoteEditor(${quote.id})"><i class="fas fa-palette"></i> Tasarla</button>
-                        <button class="btn-q-action" onclick='copyToClipboard("${quote.text}")'><i class="fas fa-copy"></i> Kopyala</button>
+                        <button class="btn-q-action" onclick='copyToClipboard("${quote.text.replace(/"/g, '&quot;')}")'><i class="fas fa-copy"></i> Kopyala</button>
                     </div>`;
                 elements.quoteContainer.appendChild(qCard);
             });
@@ -595,10 +707,13 @@
                 item.classList.add('active');
                 currentTab = item.dataset.filter;
                 
-                if (currentTab === 'sozler') displayQuotes();
-                else if (currentTab === 'kitaplar' || currentTab === 'siirler') displayBooks(currentTab);
-                else if (currentTab === 'siir_oku') displayPoems(); 
-                else displayAuthors(currentTab);
+                if (currentTab === 'sozler') {
+                    currentQuoteAuthorFilter = "all";
+                    displayQuotes(elements.searchInput.value);
+                }
+                else if (currentTab === 'kitaplar' || currentTab === 'siirler') displayBooks(currentTab, elements.searchInput.value);
+                else if (currentTab === 'siir_oku') displayPoems(elements.searchInput.value); 
+                else displayAuthors(currentTab, elements.searchInput.value);
             });
         });
 
@@ -611,6 +726,7 @@
         });
 
         const gradients = [
+            "linear-gradient(135deg, #148074, #0a524a)", 
             "linear-gradient(135deg, #2b3a55, #1b263b)", 
             "linear-gradient(135deg, #4b5563, #1f2937)", 
             "linear-gradient(135deg, #65a30d, #3f6212)", 
@@ -618,7 +734,6 @@
             "linear-gradient(135deg, #be123c, #881337)", 
             "linear-gradient(135deg, #312e81, #1e1b4b)", 
             "linear-gradient(135deg, #ea580c, #9a3412)", 
-            "linear-gradient(135deg, #0d9488, #0f766e)", 
             "linear-gradient(135deg, #6d28d9, #4c1d95)", 
             "linear-gradient(135deg, #d946ef, #a21caf)"  
         ];
@@ -642,13 +757,14 @@
 
         function autoResizeQuoteText() {
             const textEl = document.getElementById('qText');
-            const wrapper = document.getElementById('captureTarget');
+            const wrapper = document.getElementById('qContentWrapper'); 
             
-            let fontSize = 2.0; 
+            // Başlangıç boyutu
+            let fontSize = 2.4; 
             textEl.style.fontSize = fontSize + 'rem';
             
-            // Yuvarlak alan olduğu için taşmaları daha keskin hesaplamamız gerekiyor
-            while (wrapper.scrollHeight > wrapper.clientHeight && fontSize > 0.6) {
+            // Metin kutusunun içeriği, kutunun görünen boyunu aşıyorsa küçült (minimum 1.0rem'e kadar)
+            while (wrapper.scrollHeight > wrapper.clientHeight && fontSize > 1.0) {
                 fontSize -= 0.05;
                 textEl.style.fontSize = fontSize + 'rem';
             }
@@ -660,14 +776,31 @@
             document.getElementById('qAuthor').innerText = q.authorName;
             document.getElementById('qBook').innerText = q.book || '';
             
+            const authorData = authorsData.find(a => a.name === q.authorName);
+            const authorImgEl = document.getElementById('qAuthorImg');
+            
+            if (authorData && authorData.image) {
+                authorImgEl.src = authorData.image;
+                authorImgEl.onerror = () => { authorImgEl.src = getInitialsSVG(q.authorName); };
+            } else {
+                authorImgEl.src = getInitialsSVG(q.authorName);
+            }
+            
             const modal = document.getElementById('quoteEditorModal');
             
+            // Modalı görünür yapıyoruz
             modal.style.display = 'block';
             
+            // Animasyonun ve tarayıcı çiziminin bitmesini bekleyip boyutu öyle ayarlıyoruz
             setTimeout(() => {
-                autoResizeQuoteText();
                 modal.classList.add('open'); 
                 elements.overlay.classList.add('open');
+                
+                // CSS render işleminin bitmesi için boyutlandırmayı biraz gecikmeli çağırıyoruz
+                setTimeout(() => {
+                    autoResizeQuoteText();
+                }, 50); 
+
             }, 10);
         }
 
