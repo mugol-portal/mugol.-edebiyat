@@ -1,32 +1,11 @@
 const localPoemsData = [
-    { 
-        "id": 1, 
-        "authorName": "Orhan Veli Kanık", 
-        "title": "Anlatamıyorum", 
-        "text": "Ağlasam sesimi duyar mısınız,\nMısralarımda;\nDokunabilir misiniz,\nGözyaşlarıma, ellerinizle?\n\nBilmezdim şarkıların bu kadar güzel,\nKelimelerinse kifayetsiz olduğunu\nBu derde düşmeden önce.\n\nBir yer var, biliyorum;\nHer şeyi söylemek mümkün;\nEpeyce yaklaşmışım, duyuyorum;\nAnlatamıyorum." 
-    },
-    { 
-        "id": 2, 
-        "authorName": "Nazım Hikmet Ran", 
-        "title": "Yaşamaya Dair", 
-        "text": "Yaşamak şakaya gelmez,\nbüyük bir ciddiyetle yaşayacaksın,\nbir sincap gibi mesela,\nyani, yaşamanın dışında ve ötesinde hiçbir şey beklemeden,\nyani bütün işin gücün yaşamak olacak.\n\nYaşamayı ciddiye alacaksın,\nyani o derecede, öylesine ki,\nmesela, kolların bağlı arkadan, sırtın duvarda,\nyahut kocaman gözlüklerin,\n         beyaz gömleğinle bir laboratuvarda\n         insanlar için ölebileceksin." 
-    },
-    { 
-        "id": 3, 
-        "authorName": "Cemal Süreya", 
-        "title": "Üvercinka", 
-        "text": "Böylece bir kere daha boynunlayız sayılı yerlerinden\nEn uzun boynun bu senin dayanmaya ya da umudu kesmemeye\nLaleli'den dünyaya doğru giden bir tramvaydayız\nBirden nasıl oluyor sen yüreğimi elliyorsun\nAma nasıl oluyor sen yüreğimi eller ellemez\nSevişmek bir kere daha yürürlüğe giriyor\nBütün kara parçalarında\nAfrika dahil." 
-    },
-    { 
-        "id": 4, 
-        "authorName": "Yunus Emre", 
-        "title": "Bana Seni Gerek Seni", 
-        "text": "Aşkın aldı benden beni\nBana seni gerek seni\nBen yanarım dünü günü\nBana seni gerek seni\n\nNe varlığa sevinirim\nNe yokluğa yerinirim\nAşkın ile avunurum\nBana seni gerek seni" 
-    },
-    { 
-        "id": 5, 
-        "authorName": "Ahmet Erhan", 
-        "title": "Bugün De Ölmedim Anne", 
-        "text": "Yüreğimi bir kalkan bilip sokaklara çıktım\nKahvelerde oturdum çocuklarla konuştum\nSıkıldım, dertlendim, dostlarımla buluştum\nBugün de ölmedim anne.\n\nKapalıydı kapılar, perdeler örtük\nSilah sesleri uzakta boğuk boğuk\nBir yüzüm ayrılığa, bir yüzüm hayata dönük\nBugün de ölmedim anne." 
-    }
+    { "id": 1, "title": "Anlatamıyorum", "authorName": "Orhan Veli Kanık", "text": "Ağlasam sesimi duyar mısınız,\nMısralarımda;\nDokunabilir misiniz,\nGözyaşlarıma, ellerinizle?\n\nBilmezdim şarkıların bu kadar güzel,\nKelimelerinse kifayetsiz olduğunu\nBu derde düşmeden önce.\n\nBir yer var, biliyorum;\nHer şeyi söylemek mümkün;\nEpeyce yaklaşmışım, duyuyorum;\nAnlatamıyorum." },
+    { "id": 2, "title": "Seviyorum Seni", "authorName": "Nazım Hikmet Ran", "text": "Seviyorum seni\nekmeği tuza banıp yer gibi\nGeceleyin ateşler içinde uyanarak\nağzımı dayayıp musluğa su içer gibi\nAğır posta paketini, neyin nesi belirsiz,\ntelaşlı, sevinçli, kuşkulu açar gibi\nSeviyorum seni\ndenizi ilk defa uçakla geçer gibi\nİstanbul'da yumuşacık kararırken ortalık\niçimde kımıldayan bir şeyler gibi\nSeviyorum seni\nYaşıyoruz çok şükür der gibi." },
+    { "id": 3, "title": "Ben Sana Mecburum", "authorName": "Attilâ İlhan", "text": "Ben sana mecburum bilemezsin\nAdını mıh gibi aklımda tutuyorum\nBüyüdükçe büyüyor gözlerin\nBen sana mecburum bilemezsin\nİçimi seninle ısıtıyorum.\n\nAğaçlar sonbahara hazırlanıyor\nBu şehir o eski İstanbul mudur\nKaranlıkta bulutlar parçalanıyor\nSokak lambaları birden yanıyor\nKaldırımlarda yağmur kokusu\nBen sana mecburum sen yoksun." },
+    { "id": 4, "title": "Üvercinka", "authorName": "Cemal Süreya", "text": "Böylece bir kere daha boynunlayız sayılı yerlerinden\nEn uzun boynun bu senin dayanmaya ya da umudu kesmemeye\nLaleli'den dünyaya doğru giden bir tramvaydayız\nBirden nasıl oluyor sen yüreğimi elliyorsun\nAma nasıl oluyor sen yüreğimi eller ellemez\nSevişmek bir kere daha yürürlüğe giriyor\nBütün kara parçalarında\nAfrika dahil." },
+    { "id": 5, "title": "Otuz Beş Yaş", "authorName": "Cahit Sıtkı Tarancı", "text": "Yaş otuz beş! yolun yarısı eder.\nDante gibi ortasındayız ömrün.\nDelikanlı çağımızdaki cevher,\nYalvarmak, yakarmak nafile bugün,\nGözünün yaşına bakmadan gider.\n\nŞakaklarıma kar mı yağdı ne var?\nBenim mi Allahım bu çizgili yüz?\nYa gözler altındaki mor halkalar?\nNeden böyle düşman görünürsünüz,\nYıllar yılı dost bildiğim aynalar?" },
+    { "id": 6, "title": "Kaldırımlar", "authorName": "Necip Fazıl Kısakürek", "text": "Sokaktayım, kimsesiz bir sokak ortasında;\nYürüyorum, arkama bakmadan yürüyorum.\nYolumun karanlığa saplanan noktasında,\nSanki beni bekleyen bir hayal görüyorum.\n\nKara gökler kül rengi bulutlarla kapanık;\nEvlerin bacasını kolluyor yıldırımlar.\nİn cin uykuda, yalnız iki yoldaş uyanık;\nBiri benim, biri de serseri kaldırımlar." },
+    { "id": 7, "title": "Sessiz Gemi", "authorName": "Yahya Kemal Beyatlı", "text": "Artık demir almak günü gelmişse zamandan\nMeçhule giden bir gemi kalkar bu limandan.\n\nHiç yolcusu yokmuş gibi sessizce alır yol;\nSallanmaz o kalkışta ne mendil, ne de bir kol.\n\nRıhtımda kalanlar bu seyahatten elemli,\nGünlerce siyah ufka bakar gözleri nemli,\n\nBiçare gönüller! Ne giden son tekne midir bu!\nHicranlı hayatın ne de son matemidir bu." },
+    { "id": 8, "title": "Annabel Lee", "authorName": "Edgar Allan Poe", "text": "Seneler, seneler evveldi\nBir deniz ülkesinde\nYaşayan bir kız vardı bileceksiniz\nİsmi Annabel Lee;\nHiçbir şey düşünmezdi sevilmekten\nSevmekten başka beni.\n\nO çocuk ben çocuk, memleketimiz\nO deniz ülkesiydi,\nSevdalı değil karasevdalıydık\nBen ve Annabel Lee;\nGöklerde uçan melekler\nKıskanırlardı bizi." },
+    { "id": 9, "title": "Çiçekli Şiirler", "authorName": "Didem Madak", "text": "Çiçekli şiirler yazmama örselediler beni.\nÇok ağladım, bütün gün.\nGözlerim kan çanağı gibi.\nKimse sormadı, neyin var diye.\nİçimden bir ses 'herkesin canı cehenneme' dedi.\nSana gelince, sen benim hayatımda;\nKış ortasında açan bir erik ağacı gibisin." }
 ];
