@@ -124,7 +124,7 @@
 
         .quote-grid, .book-grid, .poem-grid { display: none; } 
         
-        /* SÖZLER İÇİN YAZAR FİLTRE DESTEĞİ */
+        /* ORTAK KULLANILACAK FİLTRE DESTEĞİ */
         .quote-filter-wrapper { grid-column: 1 / -1; display: flex; justify-content: center; margin-bottom: 15px; }
         .quote-filter-select { 
             padding: 12px 40px 12px 20px; 
@@ -216,11 +216,10 @@
             border-radius: 20px;
         }
 
-        /* TAŞMA VE KAYMA DÜZELTİLDİ: PADDING KISILDI */
         .qotd-card-capture { 
             background: linear-gradient(135deg, #148074, #0a524a); 
             border-radius: 20px; 
-            padding: 2rem; /* Dışarı taşmayı önlemek için 2.5rem'den 2rem'e düşürüldü */
+            padding: 2rem; 
             color: #ffffff; 
             display: flex; 
             flex-direction: column; 
@@ -239,19 +238,19 @@
             width: 100%;
             flex-grow: 1;
             justify-content: center;
-            min-height: 0; /* Esneklik için kritik */
-            overflow: hidden; /* TAŞMAYI ENGELLER */
+            min-height: 0; 
+            overflow: hidden; 
         }
 
         .quote-icon-large { 
-            font-size: 2.8rem; /* İkon metne uyumlu hale getirildi */
+            font-size: 2.8rem; 
             color: rgba(255, 255, 255, 0.15); 
-            margin-bottom: 5px; /* Metne daha yakın */
+            margin-bottom: 5px; 
             flex-shrink: 0; 
         }
         
         .qotd-text { 
-            font-size: 2.4rem; /* Başlangıç boyutu optimize edildi */
+            font-size: 2.4rem; 
             font-style: italic; 
             font-weight: 800; 
             line-height: 1.35; 
@@ -259,14 +258,14 @@
             margin-bottom: 0; 
             word-wrap: break-word;
             overflow-wrap: break-word;
-            width: 100%; /* Genişliği sabitledik */
+            width: 100%; 
         }
         
         .qotd-divider {
             width: 100%;
             height: 1px;
             background: rgba(255, 255, 255, 0.2);
-            margin: 10px 0 15px 0; /* Alt kısım ile daha dengeli boşluk */
+            margin: 10px 0 15px 0; 
         }
 
         .qotd-footer {
@@ -274,7 +273,7 @@
             flex-direction: column;
             align-items: center; 
             width: 100%;
-            gap: 12px; /* Rozet ile yazar arasındaki mesafe kısaldı */
+            gap: 12px; 
         }
 
         .qotd-author-block { 
@@ -317,7 +316,7 @@
             font-weight: 700;
             color: #ffffff;
             letter-spacing: 0.5px;
-            margin-bottom: 2px; /* Kesilmeyi engellemek için güvenlik payı */
+            margin-bottom: 2px; 
         }
 
         .qotd-controls { margin-top: 1.5rem; text-align: center;}
@@ -398,13 +397,11 @@
         </div>
         
         <div class="qotd-card-capture" id="captureTarget">
-            <!-- Üst İçerik: Tırnak ve Metin -->
             <div class="qotd-content-wrapper" id="qContentWrapper">
                 <i class="fas fa-quote-left quote-icon-large"></i>
                 <div class="qotd-text" id="qText">"Yükleniyor..."</div>
             </div>
             
-            <!-- Alt İçerik: Çizgi, Yazar Bilgisi ve Badge -->
             <div style="width: 100%;">
                 <div class="qotd-divider"></div>
                 <div class="qotd-footer">
@@ -461,7 +458,9 @@
         let favorites = JSON.parse(localStorage.getItem('mugolFavorites')) || [];
         let currentTab = "all"; 
         
+        // Filtre değişkenleri
         let currentQuoteAuthorFilter = "all";
+        let currentBookAuthorFilter = "all";
 
         if (localStorage.getItem('mugolTheme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -540,14 +539,54 @@
             hideAllContainers(); elements.bookContainer.style.display = 'grid';
             elements.bookContainer.innerHTML = ''; 
             
+            // KİTAPLAR / ŞİİRLER İÇİN YAZAR FİLTRELEME UI (Dropdown)
+            let relevantAuthors = authorsData.filter(a => filterType === 'kitaplar' ? !a.isPoet : a.isPoet);
+            relevantAuthors = relevantAuthors.filter(a => booksData.some(b => b.authorId === a.id)); // Sadece kitabı olanları al
+            relevantAuthors.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR'));
+
+            const filterWrapper = document.createElement('div');
+            filterWrapper.className = 'quote-filter-wrapper';
+            
+            const filterSelect = document.createElement('select');
+            filterSelect.className = 'quote-filter-select';
+            
+            const allOption = document.createElement('option');
+            allOption.value = "all";
+            allOption.textContent = "Tüm Yazarlar";
+            filterSelect.appendChild(allOption);
+            
+            relevantAuthors.forEach(author => {
+                const opt = document.createElement('option');
+                opt.value = author.id.toString();
+                opt.textContent = author.name;
+                if (author.id.toString() === currentBookAuthorFilter) opt.selected = true;
+                filterSelect.appendChild(opt);
+            });
+            
+            filterSelect.addEventListener('change', (e) => {
+                currentBookAuthorFilter = e.target.value;
+                displayBooks(filterType, elements.searchInput.value);
+            });
+            
+            filterWrapper.appendChild(filterSelect);
+            elements.bookContainer.appendChild(filterWrapper);
+            // KİTAPLAR FİLTRE UI BİTİŞ
+
             let filteredBooks = booksData.filter(book => {
                 const author = authorsData.find(a => a.id === book.authorId);
                 if(!author) return false;
+                
                 let matchType = filterType === 'kitaplar' ? !author.isPoet : author.isPoet; 
                 let searchLower = searchQuery.toLocaleLowerCase('tr-TR');
                 let matchSearch = book.title.toLocaleLowerCase('tr-TR').includes(searchLower) || author.name.toLocaleLowerCase('tr-TR').includes(searchLower);
-                return matchType && matchSearch;
+                let matchAuthorFilter = (currentBookAuthorFilter === "all") || (book.authorId.toString() === currentBookAuthorFilter);
+                
+                return matchType && matchSearch && matchAuthorFilter;
             });
+
+            if (filteredBooks.length === 0) {
+                elements.bookContainer.insertAdjacentHTML('beforeend', `<p style='grid-column:1/-1; text-align:center; color:var(--text-light); margin-top:20px; font-weight:600;'>Aradığınız kriterlere uygun eser bulunamadı.</p>`);
+            }
 
             filteredBooks.forEach(book => {
                 const author = authorsData.find(a => a.id === book.authorId);
@@ -711,7 +750,10 @@
                     currentQuoteAuthorFilter = "all";
                     displayQuotes(elements.searchInput.value);
                 }
-                else if (currentTab === 'kitaplar' || currentTab === 'siirler') displayBooks(currentTab, elements.searchInput.value);
+                else if (currentTab === 'kitaplar' || currentTab === 'siirler') {
+                    currentBookAuthorFilter = "all"; // Sekme değiştiğinde kitap yazar filtresini sıfırla
+                    displayBooks(currentTab, elements.searchInput.value);
+                }
                 else if (currentTab === 'siir_oku') displayPoems(elements.searchInput.value); 
                 else displayAuthors(currentTab, elements.searchInput.value);
             });
@@ -759,11 +801,9 @@
             const textEl = document.getElementById('qText');
             const wrapper = document.getElementById('qContentWrapper'); 
             
-            // Başlangıç boyutu
             let fontSize = 2.4; 
             textEl.style.fontSize = fontSize + 'rem';
             
-            // Metin kutusunun içeriği, kutunun görünen boyunu aşıyorsa küçült (minimum 1.0rem'e kadar)
             while (wrapper.scrollHeight > wrapper.clientHeight && fontSize > 1.0) {
                 fontSize -= 0.05;
                 textEl.style.fontSize = fontSize + 'rem';
@@ -788,15 +828,12 @@
             
             const modal = document.getElementById('quoteEditorModal');
             
-            // Modalı görünür yapıyoruz
             modal.style.display = 'block';
             
-            // Animasyonun ve tarayıcı çiziminin bitmesini bekleyip boyutu öyle ayarlıyoruz
             setTimeout(() => {
                 modal.classList.add('open'); 
                 elements.overlay.classList.add('open');
                 
-                // CSS render işleminin bitmesi için boyutlandırmayı biraz gecikmeli çağırıyoruz
                 setTimeout(() => {
                     autoResizeQuoteText();
                 }, 50); 
