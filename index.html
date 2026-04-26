@@ -6,6 +6,9 @@
     <title>MuGöl Edebiyat | Kütüphane</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- GOOGLE ADSENSE -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
+
     <!-- FONT: NUNITO -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400;1,600;1,700&display=swap" rel="stylesheet">
     
@@ -332,6 +335,48 @@
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
         footer { background: #1b263b; color: #a1a1aa; text-align: center; padding: 3rem; margin-top: 5rem; border-top: 4px solid var(--accent); }
+
+        /* ── AdSense Reklam Kutusu ── */
+        .mg-ad-box {
+            position: relative;
+            grid-column: 1 / -1;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 28px 12px 12px;
+            margin: 1rem 0;
+            overflow: visible;
+            box-sizing: border-box;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mg-ad-box ins.adsbygoogle {
+            display: block !important;
+            width: 300px !important;
+            height: 250px !important;
+        }
+        .mg-ad-label {
+            position: absolute;
+            top: 7px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            background: var(--bg-card);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1;
+            font-family: 'Nunito', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -533,6 +578,14 @@
                 elements.authorContainer.appendChild(card);
             });
             if(window.innerWidth < 768) closeModals();
+            // ── Reklam Kutusu ──
+            const adAuthor = document.createElement('div');
+            adAuthor.className = 'mg-ad-box';
+            adAuthor.setAttribute('aria-label', 'Reklam');
+            adAuthor.setAttribute('role', 'complementary');
+            adAuthor.innerHTML = '<span class="mg-ad-label">Reklam</span><ins class="adsbygoogle" style="display:block;width:300px;height:250px;" data-ad-client="ca-pub-1880946354382681" data-ad-slot="1689789138" data-ad-format="rectangle"></ins>';
+            elements.authorContainer.appendChild(adAuthor);
+            mgPushAds();
         }
 
         function displayBooks(filterType, searchQuery = "") {
@@ -605,6 +658,14 @@
                 elements.bookContainer.appendChild(bCard);
             });
             if(window.innerWidth < 768) closeModals();
+            // ── Reklam Kutusu ──
+            const adBook = document.createElement('div');
+            adBook.className = 'mg-ad-box';
+            adBook.setAttribute('aria-label', 'Reklam');
+            adBook.setAttribute('role', 'complementary');
+            adBook.innerHTML = '<span class="mg-ad-label">Reklam</span><ins class="adsbygoogle" style="display:block;width:300px;height:250px;" data-ad-client="ca-pub-1880946354382681" data-ad-slot="1689789138" data-ad-format="rectangle"></ins>';
+            elements.bookContainer.appendChild(adBook);
+            mgPushAds();
         }
 
         function displayPoems(searchQuery = "") {
@@ -633,6 +694,14 @@
                 elements.poemContainer.appendChild(pCard);
             });
             if(window.innerWidth < 768) closeModals();
+            // ── Reklam Kutusu ──
+            const adPoem = document.createElement('div');
+            adPoem.className = 'mg-ad-box';
+            adPoem.setAttribute('aria-label', 'Reklam');
+            adPoem.setAttribute('role', 'complementary');
+            adPoem.innerHTML = '<span class="mg-ad-label">Reklam</span><ins class="adsbygoogle" style="display:block;width:300px;height:250px;" data-ad-client="ca-pub-1880946354382681" data-ad-slot="1689789138" data-ad-format="rectangle"></ins>';
+            elements.poemContainer.appendChild(adPoem);
+            mgPushAds();
         }
 
         function displayQuotes(searchQuery = "") {
@@ -693,6 +762,14 @@
                 elements.quoteContainer.appendChild(qCard);
             });
             if(window.innerWidth < 768) closeModals();
+            // ── Reklam Kutusu ──
+            const adQuote = document.createElement('div');
+            adQuote.className = 'mg-ad-box';
+            adQuote.setAttribute('aria-label', 'Reklam');
+            adQuote.setAttribute('role', 'complementary');
+            adQuote.innerHTML = '<span class="mg-ad-label">Reklam</span><ins class="adsbygoogle" style="display:block;width:300px;height:250px;" data-ad-client="ca-pub-1880946354382681" data-ad-slot="1689789138" data-ad-format="rectangle"></ins>';
+            elements.quoteContainer.appendChild(adQuote);
+            mgPushAds();
         }
 
         window.toggleFavorite = (id, btn) => {
@@ -857,5 +934,17 @@
 
         displayAuthors('all');
     </script>
+
+    <!-- ── AdSense Lazy Push ── -->
+    <script>
+    function mgPushAds() {
+        document.querySelectorAll('ins.adsbygoogle').forEach(function(ins) {
+            if (!ins.getAttribute('data-adsbygoogle-status')) {
+                try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+            }
+        });
+    }
+    </script>
+
 </body>
 </html>
