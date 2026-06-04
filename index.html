@@ -15,7 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- VERİ DOSYALARI -->
-    <script src="data_authors.js"></script>
+    <script src="data_authors_turk.js"></script>
+    <script src="data_authors_dunya.js"></script>
     <script src="data_books.js"></script>
     <script src="data_quotes.js"></script>
     <script src="data_poems.js"></script>
@@ -495,7 +496,10 @@
         };
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        let authorsData = typeof localAuthorsData !== 'undefined' ? localAuthorsData : [];
+        let authorsData = [
+            ...(typeof localAuthorsTurkData !== 'undefined' ? localAuthorsTurkData : []),
+            ...(typeof localAuthorsDunyaData !== 'undefined' ? localAuthorsDunyaData : [])
+        ];
         let booksData = typeof localBooksData !== 'undefined' ? localBooksData : [];
         let quotesData = typeof localQuotesData !== 'undefined' ? localQuotesData : [];
         let poemsData = typeof localPoemsData !== 'undefined' ? localPoemsData : []; 
