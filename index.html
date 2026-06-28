@@ -345,10 +345,8 @@
             .modal-right { width: 65%; overflow-y: auto; }
         }
 
-        .modal-left { background: linear-gradient(180deg, #1b263b 0%, #415a77 100%); color: #fff; padding: 3rem 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;}
-        .modal-left::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at top, rgba(196,167,125,0.2), transparent 60%); pointer-events: none;}
-        .modal-left > * { position: relative; z-index: 1; }
-        .modal-left img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; object-position: top center; border: 5px solid var(--accent); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4); flex-shrink: 0; display: block; background: #1b263b;}
+        .modal-left { background: linear-gradient(180deg, #1b263b 0%, #415a77 100%); color: #fff; padding: 3rem 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative;}
+        .modal-left img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; object-position: center center; border: 5px solid var(--accent); margin-bottom: 1.5rem;}
 
         /* ── YENİ: Modal İçi Favori Butonu ── */
         .modal-fav-btn {
@@ -706,7 +704,7 @@
                     </div>
                     
                     <div class="qotd-brand-badge">
-                        <img src="logo.png" alt="MuGöl" style="height:18px;width:auto;object-fit:contain;vertical-align:middle;"> MuGöl Edebiyat
+                        <img src="logo.png" alt="MuGöl" style="height:18px;width:18px;object-fit:cover;border-radius:50%;vertical-align:middle;flex-shrink:0;"> MuGöl Edebiyat
                     </div>
                 </div>
             </div>
