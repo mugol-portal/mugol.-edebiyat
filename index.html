@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <!-- TEMA ÖN YÜKLEME: Sayfa açılışında beyaz ekran çakmasını (FOUC) önler -->
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('mugolTheme') === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MuGöl Edebiyat | Kütüphane</title>
@@ -28,13 +38,17 @@
             --primary: #1b263b; 
             --primary-light: #415a77;
             --accent: #c4a77d;  
+            --accent-strong: #b09265;
             --text-dark: #2b2d42;
             --text-light: #6c757d;
             --danger: #e63946;
             --border-color: rgba(196, 167, 125, 0.3);
-            --shadow-sm: 0 8px 20px rgba(0,0,0,0.06);
-            --shadow-hover: 0 15px 35px rgba(27, 38, 59, 0.15);
-            --border-radius: 16px;
+            --shadow-sm: 0 6px 18px rgba(27, 38, 59, 0.07);
+            --shadow-md: 0 12px 28px rgba(27, 38, 59, 0.10);
+            --shadow-hover: 0 22px 45px rgba(27, 38, 59, 0.18);
+            --shadow-accent: 0 10px 25px rgba(196, 167, 125, 0.35);
+            --border-radius: 18px;
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         [data-theme="dark"] {
@@ -42,12 +56,15 @@
             --bg-card: #1e293b;
             --primary: #e2e8f0; 
             --primary-light: #94a3b8;
-            --accent: #d4af37;  
+            --accent: #d4af37;
+            --accent-strong: #b8941f;
             --text-dark: #f8fafc;
             --text-light: #cbd5e1;
-            --border-color: rgba(212, 175, 55, 0.2);
-            --shadow-sm: 0 8px 20px rgba(0,0,0,0.3);
-            --shadow-hover: 0 15px 35px rgba(0,0,0,0.5);
+            --border-color: rgba(212, 175, 55, 0.22);
+            --shadow-sm: 0 6px 18px rgba(0,0,0,0.35);
+            --shadow-md: 0 14px 32px rgba(0,0,0,0.45);
+            --shadow-hover: 0 22px 45px rgba(0,0,0,0.55);
+            --shadow-accent: 0 10px 25px rgba(212, 175, 55, 0.25);
         }
 
         /* TAŞMA VE KIRILMA ÖNLEMLERİ */
@@ -60,78 +77,204 @@
             overflow-x: hidden; 
             transition: background-color 0.4s ease, color 0.4s ease; 
             word-wrap: break-word;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent), var(--accent-strong)); border-radius: 10px; border: 2px solid var(--bg-base); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-strong); }
 
-        header { background: linear-gradient(135deg, rgba(27, 38, 59, 0.98), rgba(65, 90, 119, 0.95)); color: #fff; border-bottom: 4px solid var(--accent); display: flex; flex-direction: column; }
-        .header-top-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; max-width: 1400px; margin: 0 auto; padding: 1.2rem 1.5rem; width: 100%; gap: 15px;}
+        ::selection { background: var(--accent); color: #fff; }
+
+        header { 
+            background: linear-gradient(135deg, rgba(27, 38, 59, 0.98), rgba(65, 90, 119, 0.95)); 
+            color: #fff; 
+            border-bottom: 4px solid var(--accent); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at top right, rgba(196,167,125,0.18), transparent 60%);
+            pointer-events: none;
+        }
+        .header-top-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; max-width: 1400px; margin: 0 auto; padding: 1.2rem 1.5rem; width: 100%; gap: 15px; position: relative; z-index: 1;}
         .header-actions { display: flex; gap: 12px; align-items: center; }
         
-        .header-brand-logo { height: 45px; width: auto; object-fit: contain; border-radius: 6px; }
+        .header-brand-logo { height: 48px; width: auto; object-fit: contain; border-radius: 8px; transition: transform 0.4s var(--ease); }
+        .header-brand-logo:hover { transform: scale(1.05) rotate(-2deg); }
 
-        .icon-btn { font-size: 1.2rem; color: var(--accent); cursor: pointer; background: rgba(255,255,255,0.08); border: 1px solid rgba(196,167,125,0.3); border-radius: 50%; width: 45px; height: 45px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; flex-shrink: 0;}
-        .icon-btn:hover { background: var(--accent); color: #fff; transform: scale(1.1); }
+        .icon-btn { 
+            font-size: 1.15rem; 
+            color: var(--accent); 
+            cursor: pointer; 
+            background: rgba(255,255,255,0.08); 
+            border: 1px solid rgba(196,167,125,0.35); 
+            border-radius: 50%; 
+            width: 46px; 
+            height: 46px; 
+            transition: all 0.35s var(--ease); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(196,167,125,0.5), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+        .icon-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px) scale(1.06); box-shadow: var(--shadow-accent); border-color: var(--accent); }
+        .icon-btn:hover::before { opacity: 1; }
+        .icon-btn:active { transform: translateY(0) scale(1); }
         
-        [data-theme="dark"] .icon-btn { background: rgba(255,255,255,0.15); border-color: rgba(212,175,55,0.5); color: #fff;}
+        [data-theme="dark"] .icon-btn { background: rgba(255,255,255,0.12); border-color: rgba(212,175,55,0.5); color: #fff;}
         [data-theme="dark"] .icon-btn:hover { background: var(--accent); color: #1e293b; }
 
-        .header-content { text-align: center; padding-bottom: 2rem; padding-left: 1rem; padding-right: 1rem; }
-        .header-content h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--accent); font-weight: 800; }
-        .header-content p { font-style: italic; color: #e0e1dd; font-weight: 300; }
+        .header-content { text-align: center; padding-bottom: 2.2rem; padding-left: 1rem; padding-right: 1rem; position: relative; z-index: 1; }
+        .header-content h1 { 
+            font-size: clamp(2rem, 5vw, 3.2rem); 
+            color: var(--accent); 
+            font-weight: 800; 
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .header-content p { font-style: italic; color: #e0e1dd; font-weight: 300; letter-spacing: 0.3px; opacity: 0.92;}
 
-        .search-overlay-bar { position: fixed; top: -120px; left: 0; width: 100%; background: var(--bg-card); z-index: 1005; padding: 20px 2rem; display: flex; justify-content: center; align-items: center; gap: 20px; transition: top 0.4s; border-bottom: 3px solid var(--accent); }
+        .search-overlay-bar { position: fixed; top: -120px; left: 0; width: 100%; background: var(--bg-card); z-index: 1005; padding: 20px 2rem; display: flex; justify-content: center; align-items: center; gap: 20px; transition: top 0.45s var(--ease); border-bottom: 3px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.15);}
         .search-overlay-bar.open { top: 0; }
         .search-wrapper { position: relative; width: 100%; max-width: 800px; }
-        .search-wrapper input { width: 100%; padding: 16px 20px 16px 55px; border-radius: 40px; border: 2px solid var(--border-color); background: var(--bg-base); color: var(--text-dark); font-size: 1.1rem; outline: none; font-family: 'Nunito', sans-serif;}
+        .search-wrapper input { 
+            width: 100%; 
+            padding: 16px 20px 16px 55px; 
+            border-radius: 40px; 
+            border: 2px solid var(--border-color); 
+            background: var(--bg-base); 
+            color: var(--text-dark); 
+            font-size: 1.1rem; 
+            outline: none; 
+            font-family: 'Nunito', sans-serif;
+            transition: 0.3s var(--ease);
+        }
+        .search-wrapper input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(196,167,125,0.18); }
         .search-wrapper i { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.3rem; }
-        .close-search-btn { background: rgba(230,57,70,0.1); color: var(--danger); border: none; font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: 0.3s; flex-shrink: 0;}
-        .close-search-btn:hover { background: var(--danger); color: #fff; }
+        .close-search-btn { background: rgba(230,57,70,0.1); color: var(--danger); border: none; font-size: 1.4rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: 0.3s var(--ease); flex-shrink: 0;}
+        .close-search-btn:hover { background: var(--danger); color: #fff; transform: rotate(90deg); box-shadow: 0 8px 18px rgba(230,57,70,0.35);}
 
-        .sidebar { position: fixed; top: 0; left: -320px; width: min(320px, 100%); height: 100vh; background: rgba(27, 38, 59, 0.95); border-right: 1px solid rgba(196, 167, 125, 0.3); transition: left 0.4s; z-index: 1000; padding-top: 30px; overflow-y: auto;}
+        .sidebar { position: fixed; top: 0; left: -340px; width: min(320px, 100%); height: 100vh; background: linear-gradient(180deg, rgba(27, 38, 59, 0.98), rgba(15, 23, 42, 0.98)); border-right: 1px solid rgba(196, 167, 125, 0.3); transition: left 0.45s var(--ease); z-index: 1000; padding-top: 30px; overflow-y: auto; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 8px 0 30px rgba(0,0,0,0.3);}
         .sidebar.open { left: 0; }
-        .sidebar-title { color: var(--accent); font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(196, 167, 125, 0.2); padding-bottom: 0.8rem; }
+        .sidebar-title { color: var(--accent); font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(196, 167, 125, 0.25); padding-bottom: 0.8rem; letter-spacing: 0.5px;}
         
         .sidebar ul { list-style: none; }
-        .sidebar ul li { padding: 14px 25px; font-size: 1.1rem; cursor: pointer; color: #e0e1dd; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.3s; font-weight: 600;}
-        .sidebar ul li:hover, .sidebar ul li.active { color: var(--accent); border-left: 4px solid var(--accent); background: rgba(196,167,125,0.1); }
+        .sidebar ul li { padding: 14px 25px; font-size: 1.05rem; cursor: pointer; color: #e0e1dd; border-bottom: 1px solid rgba(255,255,255,0.04); transition: 0.3s var(--ease); font-weight: 600; border-left: 4px solid transparent;}
+        .sidebar ul li:hover, .sidebar ul li.active { color: var(--accent); border-left-color: var(--accent); background: rgba(196,167,125,0.12); padding-left: 30px;}
         
         /* PORTALA DÖNÜŞ MENÜSÜ ÖZEL STİLİ */
-        .sidebar ul li.menu-external { background: rgba(230,57,70,0.1); border-bottom: none; margin-bottom: 15px; border-left: 4px solid var(--danger); padding: 0;}
+        .sidebar ul li.menu-external { background: rgba(230,57,70,0.12); border-bottom: none; margin-bottom: 15px; border-left: 4px solid var(--danger); padding: 0;}
         .sidebar ul li.menu-external a { color: #e63946; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 800; padding: 14px 25px; width: 100%;}
-        .sidebar ul li.menu-external:hover { background: var(--danger); }
+        .sidebar ul li.menu-external:hover { background: var(--danger); padding-left: 0;}
         .sidebar ul li.menu-external:hover a { color: #fff; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; display: none; opacity: 0; transition: 0.4s; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999; display: none; opacity: 0; transition: 0.4s; }
         .overlay.open { display: block; opacity: 1; }
 
         .container { max-width: 1300px; margin: 3rem auto 5rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 3.5rem 2.5rem; }
         
-        .card { background: var(--bg-card); border-radius: var(--border-radius); padding: 3.5rem 2rem 2rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-top: 40px; transition: 0.4s;}
-        .card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
-        .author-img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; position: absolute; top: -55px; border: 5px solid var(--bg-card); background: #1b263b; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
-        
-        .fav-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #e2e8f0; cursor: pointer; background: none; border: none; }
-        [data-theme="dark"] .fav-btn { color: #475569; }
-        .fav-btn.active { color: var(--danger); }
-        
-        .author-name { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-top: 0.5rem; }
-        .author-meta { font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 1rem; background: rgba(196, 167, 125, 0.1); padding: 4px 12px; border-radius: 20px;}
-        .bio-short { color: var(--text-light); font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1;}
-        .quote { padding: 1.2rem; font-style: italic; color: var(--primary-light); background: rgba(196,167,125,0.05); border-left: 3px solid var(--accent); font-size: 0.95rem; width: 100%; margin-bottom: 1.5rem; text-align: left; border-radius: 0 8px 8px 0;}
+        .card { 
+            background: var(--bg-card); 
+            border-radius: var(--border-radius); 
+            padding: 3.5rem 2rem 2rem 2rem; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            position: relative; 
+            box-shadow: var(--shadow-sm); 
+            border: 1px solid var(--border-color); 
+            margin-top: 40px; 
+            transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), border-color 0.45s var(--ease);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--border-radius);
+            padding: 1px;
+            background: linear-gradient(135deg, transparent, var(--accent), transparent);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .card:hover { transform: translateY(-12px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
+        .card:hover::before { opacity: 1; }
+        .card:hover .author-img { transform: scale(1.08); box-shadow: var(--shadow-accent); }
 
-        .btn-detail { background: linear-gradient(135deg, #1b263b, #415a77); color: #fff; border: none; padding: 0.9rem; width: 100%; font-size: 1rem; font-weight: 700; cursor: pointer; border-radius: 30px; transition: 0.3s; font-family: 'Nunito', sans-serif;}
-        .btn-detail:hover { background: linear-gradient(135deg, var(--accent), #b09265); transform: translateY(-2px); }
-        [data-theme="dark"] .btn-detail { background: linear-gradient(135deg, var(--accent), #b09265); color: #1e293b; font-weight: 800; }
-        [data-theme="dark"] .btn-detail:hover { background: linear-gradient(135deg, #d4af37, #fde08b); box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3); }
+        .author-img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; position: absolute; top: -55px; border: 5px solid var(--bg-card); background: linear-gradient(135deg, #1b263b, #415a77); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease); box-shadow: 0 6px 18px rgba(0,0,0,0.18);}
+        
+        .fav-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #e2e8f0; cursor: pointer; background: none; border: none; transition: transform 0.25s var(--ease), color 0.25s ease; padding: 6px;}
+        .fav-btn:hover { transform: scale(1.2); }
+        [data-theme="dark"] .fav-btn { color: #475569; }
+        .fav-btn.active { color: var(--danger); animation: heartPop 0.45s var(--ease);}
+        @keyframes heartPop { 0% { transform: scale(1);} 40% { transform: scale(1.35);} 100% { transform: scale(1);} }
+        
+        .author-name { font-size: 1.55rem; font-weight: 800; color: var(--primary); margin-top: 0.5rem; letter-spacing: -0.3px;}
+        .author-meta { font-size: 0.82rem; color: var(--accent); font-weight: 700; margin-bottom: 1rem; background: rgba(196, 167, 125, 0.12); padding: 5px 14px; border-radius: 20px; letter-spacing: 0.5px;}
+        .bio-short { color: var(--text-light); font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1;}
+        .quote { padding: 1.2rem; font-style: italic; color: var(--primary-light); background: rgba(196,167,125,0.06); border-left: 3px solid var(--accent); font-size: 0.95rem; width: 100%; margin-bottom: 1.5rem; text-align: left; border-radius: 0 10px 10px 0;}
+
+        .btn-detail { 
+            background: linear-gradient(135deg, #1b263b, #415a77); 
+            color: #fff; 
+            border: none; 
+            padding: 0.95rem 1.2rem; 
+            width: 100%; 
+            font-size: 1rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            border-radius: 30px; 
+            transition: all 0.4s var(--ease); 
+            font-family: 'Nunito', sans-serif;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+            box-shadow: 0 6px 16px rgba(27,38,59,0.25);
+        }
+        .btn-detail::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s var(--ease);
+        }
+        .btn-detail:hover { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); transform: translateY(-3px); box-shadow: var(--shadow-accent); }
+        .btn-detail:hover::before { left: 100%; }
+        .btn-detail:active { transform: translateY(-1px); }
+        [data-theme="dark"] .btn-detail { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #1e293b; font-weight: 800; }
+        [data-theme="dark"] .btn-detail:hover { background: linear-gradient(135deg, #d4af37, #fde08b); box-shadow: 0 10px 26px rgba(212, 175, 55, 0.4); }
 
         .quote-grid, .book-grid, .poem-grid { display: none; } 
         
         /* ORTAK KULLANILACAK FİLTRE DESTEĞİ */
         .quote-filter-wrapper { grid-column: 1 / -1; display: flex; justify-content: center; margin-bottom: 15px; }
         .quote-filter-select { 
-            padding: 12px 40px 12px 20px; 
+            padding: 12px 44px 12px 22px; 
             border-radius: 30px; 
             border: 2px solid var(--accent); 
             background-color: var(--bg-card); 
@@ -140,7 +283,7 @@
             font-family: 'Nunito', sans-serif; 
             cursor: pointer; 
             outline: none; 
-            transition: 0.3s; 
+            transition: 0.3s var(--ease); 
             min-width: 280px; 
             font-weight: 700; 
             box-shadow: var(--shadow-sm); 
@@ -148,35 +291,51 @@
             -webkit-appearance: none; 
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c4a77d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
             background-repeat: no-repeat; 
-            background-position: right 15px center; 
+            background-position: right 16px center; 
             background-size: 18px; 
         }
-        .quote-filter-select:hover, .quote-filter-select:focus { border-color: var(--primary); }
+        .quote-filter-select:hover, .quote-filter-select:focus { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
         [data-theme="dark"] .quote-filter-select:hover, [data-theme="dark"] .quote-filter-select:focus { border-color: #fff; }
 
-        .poem-card { background: var(--bg-card); border-radius: var(--border-radius); padding: 2.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; transition: 0.3s; }
-        .poem-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow-hover);}
-        .poem-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem; }
-        .poem-author { color: var(--accent); font-weight: 700; font-size: 0.9rem; margin-bottom: 1.5rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
-        .poem-text { font-size: 1.05rem; color: var(--text-dark); line-height: 1.8; white-space: pre-line; font-style: italic; }
+        .poem-card { background: var(--bg-card); border-radius: var(--border-radius); padding: 2.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; transition: 0.4s var(--ease); overflow: hidden;}
+        .poem-card::after { content: '\201C'; position: absolute; top: -20px; right: 15px; font-size: 8rem; color: var(--accent); opacity: 0.08; font-family: Georgia, serif; line-height: 1; pointer-events: none;}
+        .poem-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow-hover);}
+        .poem-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 0.2rem; letter-spacing: -0.3px;}
+        .poem-author { color: var(--accent); font-weight: 700; font-size: 0.9rem; margin-bottom: 1.5rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; letter-spacing: 1px;}
+        .poem-text { font-size: 1.05rem; color: var(--text-dark); line-height: 1.85; white-space: pre-line; font-style: italic; position: relative; z-index: 1;}
 
-        .q-card { background: var(--bg-card); border-radius: var(--border-radius); padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden; transition: 0.3s;}
-        .q-card:hover { transform: translateY(-8px); border-color: var(--accent); }
-        .q-card-text { font-size: 1.3rem; font-style: italic; font-weight: 600; color: var(--text-dark); margin-bottom: 1.5rem; z-index: 1; }
-        .q-card-author { color: var(--accent); font-weight: 800; font-size: 1rem; text-transform: uppercase; z-index: 1;}
+        .q-card { background: var(--bg-card); border-radius: var(--border-radius); padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden; transition: 0.4s var(--ease);}
+        .q-card::before { content: '\201C'; position: absolute; top: -30px; left: 10px; font-size: 9rem; color: var(--accent); opacity: 0.1; font-family: Georgia, serif; line-height: 1; pointer-events: none;}
+        .q-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: var(--shadow-hover);}
+        .q-card-text { font-size: 1.3rem; font-style: italic; font-weight: 600; color: var(--text-dark); margin-bottom: 1.5rem; z-index: 1; position: relative; line-height: 1.55;}
+        .q-card-author { color: var(--accent); font-weight: 800; font-size: 1rem; text-transform: uppercase; z-index: 1; position: relative; letter-spacing: 1px;}
         
-        .q-card-actions { display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; z-index: 1;}
-        .btn-q-action { flex: 1; background: transparent; border: 1px solid var(--border-color); color: var(--text-dark); padding: 0.6rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; text-align: center; font-family: 'Nunito', sans-serif;}
-        .btn-q-action:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .q-card-actions { display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; z-index: 1; position: relative;}
+        .btn-q-action { 
+            flex: 1; 
+            background: transparent; 
+            border: 1.5px solid var(--border-color); 
+            color: var(--text-dark); 
+            padding: 0.65rem 0.8rem; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.3s var(--ease); 
+            text-align: center; 
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+        }
+        .btn-q-action:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-accent);}
+        .btn-q-action:active { transform: translateY(0); }
         [data-theme="dark"] .btn-q-action { border-color: rgba(212, 175, 55, 0.4); color: var(--text-dark); background: rgba(255,255,255,0.05); }
         [data-theme="dark"] .btn-q-action:hover { background: var(--accent); color: #1e293b; border-color: var(--accent); }
 
         /* YAZAR DETAY MODALI */
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -45%) scale(0.95); background: var(--bg-card); width: 92%; max-width: 900px; max-height: 90vh; border-radius: var(--border-radius); z-index: 1002; display: none; opacity: 0; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transition: 0.4s; overflow: hidden; flex-direction: column; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -45%) scale(0.95); background: var(--bg-card); width: 92%; max-width: 900px; max-height: 90vh; border-radius: var(--border-radius); z-index: 1002; display: none; opacity: 0; box-shadow: 0 35px 70px rgba(0,0,0,0.55); transition: 0.45s var(--ease); overflow: hidden; flex-direction: column; }
         .modal.open { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
         
-        .close-modal-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #fff; z-index: 10; background: rgba(0,0,0,0.4); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s;}
-        .close-modal-btn:hover { background: rgba(0,0,0,0.8); }
+        .close-modal-btn { position: absolute; top: 15px; right: 20px; font-size: 1.3rem; cursor: pointer; color: #fff; z-index: 10; background: rgba(0,0,0,0.45); width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s var(--ease); backdrop-filter: blur(8px);}
+        .close-modal-btn:hover { background: var(--danger); transform: rotate(90deg) scale(1.05); }
         
         .modal-grid { display: flex; flex-direction: column; width: 100%; height: 100%; overflow-y: auto;}
         
@@ -186,38 +345,89 @@
             .modal-right { width: 65%; overflow-y: auto; }
         }
 
-        .modal-left { background: linear-gradient(180deg, #1b263b 0%, #415a77 100%); color: #fff; padding: 3rem 2rem; text-align: center; display: flex; flex-direction: column; align-items: center;}
-        .modal-left img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 5px solid var(--accent); margin-bottom: 1.5rem;}
-        .modal-left h2 { font-size: 2rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem; line-height: 1.2;}
+        .modal-left { background: linear-gradient(180deg, #1b263b 0%, #415a77 100%); color: #fff; padding: 3rem 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;}
+        .modal-left::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at top, rgba(196,167,125,0.2), transparent 60%); pointer-events: none;}
+        .modal-left > * { position: relative; z-index: 1; }
+        .modal-left img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 5px solid var(--accent); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4); flex-shrink: 0; display: block; background: #1b263b;}
+
+        /* ── YENİ: Modal İçi Favori Butonu ── */
+        .modal-fav-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.55);
+            background: rgba(0,0,0,0.35);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 5;
+        }
+        .modal-fav-btn:hover { color: var(--danger); background: rgba(0,0,0,0.5); }
+        .modal-fav-btn.active { color: var(--danger); }
+
+        /* ── YENİ: Modal Yıl Rozeti ── */
+        .modal-years-badge { background: rgba(255,255,255,0.15); padding: 5px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap; }
+
+        /* ── YENİ: Önceki/Sonraki/Paylaş Aksiyon Satırı ── */
+        .modal-action-row { display: flex; gap: 10px; margin-top: 1.5rem; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .modal-action-btn {
+            flex: 1;
+            min-width: 90px;
+            background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: 0.3s var(--ease);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .modal-action-btn:hover { background: var(--accent); color: #1e293b; border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-accent); }
+        .modal-left h2 { font-size: 2rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem; line-height: 1.2; letter-spacing: -0.5px;}
         
         .modal-right { padding: 2.5rem 2rem; background: var(--bg-card);}
-        .modal-right h3 { color: var(--primary); font-size: 1.4rem; font-weight: 800; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        .modal-right h3 { color: var(--primary); font-size: 1.4rem; font-weight: 800; border-bottom: 2px solid var(--border-color); padding-bottom: 0.6rem; margin-bottom: 1rem; letter-spacing: -0.3px;}
         .modal-right p { font-size: 1rem; color: var(--text-dark); margin-bottom: 2rem;}
         
         .modal-books { list-style: none; display: flex; flex-direction: column; gap: 1.2rem; padding-bottom: 1rem;}
-        .modal-books li { background: var(--bg-base); padding: 1.2rem 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent); }
+        .modal-books li { background: var(--bg-base); padding: 1.2rem 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent); transition: 0.3s var(--ease);}
+        .modal-books li:hover { transform: translateX(4px); box-shadow: var(--shadow-sm); }
         .book-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 0.5rem; flex-wrap: wrap;}
         .book-header strong { color: var(--primary); font-size: 1.1rem; font-weight: 800; }
-        .book-year { background: #415a77; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; white-space: nowrap;}
+        .book-year { background: linear-gradient(135deg, #415a77, #1b263b); color: #fff; font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 14px; white-space: nowrap; letter-spacing: 0.3px;}
         
-        .book-review-acc { margin-top: 15px; background: rgba(196, 167, 125, 0.08); border-radius: 8px; border: 1px solid rgba(196,167,125,0.2); transition: 0.3s;}
-        [data-theme="dark"] .book-review-acc { background: rgba(0,0,0,0.2); }
-        .book-review-acc summary { font-size: 0.95rem; color: var(--accent); cursor: pointer; font-weight: 700; list-style: none; padding: 10px 15px; display: flex; align-items: center; gap: 8px; outline: none; }
+        .book-review-acc { margin-top: 15px; background: rgba(196, 167, 125, 0.08); border-radius: 10px; border: 1px solid rgba(196,167,125,0.22); transition: 0.3s;}
+        [data-theme="dark"] .book-review-acc { background: rgba(0,0,0,0.22); }
+        .book-review-acc summary { font-size: 0.95rem; color: var(--accent); cursor: pointer; font-weight: 700; list-style: none; padding: 12px 16px; display: flex; align-items: center; gap: 8px; outline: none; transition: 0.3s;}
         .book-review-acc summary::-webkit-details-marker { display: none; }
-        .book-review-acc summary:hover { background: rgba(196, 167, 125, 0.15); border-radius: 8px;}
-        .review-text { font-size: 0.95rem; color: var(--text-dark); padding: 15px; border-top: 1px solid var(--border-color); font-style: italic; line-height: 1.6; }
+        .book-review-acc summary:hover { background: rgba(196, 167, 125, 0.18); border-radius: 10px;}
+        .book-review-acc[open] summary { border-radius: 10px 10px 0 0; background: rgba(196, 167, 125, 0.15);}
+        .review-text { font-size: 0.95rem; color: var(--text-dark); padding: 15px; border-top: 1px solid var(--border-color); font-style: italic; line-height: 1.65; }
 
         /* KART HAZIRLAMA MODALI */
         .editor-modal { 
             width: 92%;
             max-width: 480px; 
             max-height: 90vh;
-            background: #1e293b; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            background: linear-gradient(180deg, #1e293b, #0f172a); 
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6); 
             padding: 1.5rem; 
             overflow-y: auto; 
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
+            border-radius: 22px;
         }
 
         .qotd-card-capture { 
@@ -232,110 +442,62 @@
             overflow: hidden;
             justify-content: space-between;
             text-align: left;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.45);
         }
 
-        .qotd-content-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            width: 100%;
-            flex-grow: 1;
-            justify-content: center;
-            min-height: 0; 
-            overflow: hidden; 
-        }
-
-        .quote-icon-large { 
-            font-size: 2.8rem; 
-            color: rgba(255, 255, 255, 0.15); 
-            margin-bottom: 5px; 
-            flex-shrink: 0; 
-        }
-        
-        .qotd-text { 
-            font-size: 2.4rem; 
-            font-style: italic; 
-            font-weight: 800; 
-            line-height: 1.35; 
-            color: #fff; 
-            margin-bottom: 0; 
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            width: 100%; 
-        }
-        
-        .qotd-divider {
-            width: 100%;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-            margin: 10px 0 15px 0; 
-        }
-
-        .qotd-footer {
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            width: 100%;
-            gap: 12px; 
-        }
-
-        .qotd-author-block { 
-            display: flex; 
-            flex-direction: row;
-            align-items: center; 
-            justify-content: flex-start;
-            width: 100%;
-            gap: 12px;
-        }
-
-        .qotd-author-img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            background: #1b263b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #c4a77d;
-            font-size: 1.2rem;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
+        .qotd-content-wrapper { display: flex; flex-direction: column; align-items: flex-start; width: 100%; flex-grow: 1; justify-content: center; min-height: 0; overflow: hidden;}
+        .quote-icon-large { font-size: 2.8rem; color: rgba(255, 255, 255, 0.18); margin-bottom: 5px; flex-shrink: 0;}
+        .qotd-text { font-size: 2.4rem; font-style: italic; font-weight: 800; line-height: 1.35; color: #fff; margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word; width: 100%;}
+        .qotd-divider { width: 100%; height: 1px; background: rgba(255, 255, 255, 0.22); margin: 10px 0 15px 0;}
+        .qotd-footer { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 12px;}
+        .qotd-author-block { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; width: 100%; gap: 12px;}
+        .qotd-author-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.8); background: #1b263b; display: flex; align-items: center; justify-content: center; color: #c4a77d; font-size: 1.2rem; font-weight: bold; flex-shrink: 0;}
         .qotd-author-text { display: flex; flex-direction: column; align-items: flex-start; }
         .qotd-author-name { font-size: 0.95rem; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;}
-        .qotd-book-name { color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-weight: 400; line-height: 1.2; margin-top: 2px;}
-        
-        .qotd-brand-badge {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 16px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px; 
-        }
+        .qotd-book-name { color: rgba(255, 255, 255, 0.72); font-size: 0.8rem; font-weight: 400; line-height: 1.2; margin-top: 2px;}
+        .qotd-brand-badge { background: rgba(255, 255, 255, 0.18); padding: 6px 16px; border-radius: 30px; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 2px; backdrop-filter: blur(8px);}
 
         .qotd-controls { margin-top: 1.5rem; text-align: center;}
-        .palette-title { color: #f8fafc; font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; }
+        .palette-title { color: #f8fafc; font-size: 1.15rem; font-weight: 800; margin-bottom: 15px; letter-spacing: 0.3px;}
         .color-palette { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;}
-        .color-swatch { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); border: 2px solid transparent; transition: 0.2s;}
-        .color-swatch.active { border-color: var(--accent); transform: scale(1.15); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);}
-        
-        .btn-download { background: var(--accent); color: #1e293b; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Nunito', sans-serif;}
-        .btn-download:hover { background: #d4af37; transform: translateY(-2px); }
+        .color-swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; box-shadow: inset 0 0 12px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.25); border: 2px solid transparent; transition: 0.25s var(--ease);}
+        .color-swatch:hover { transform: scale(1.1); }
+        .color-swatch.active { border-color: var(--accent); transform: scale(1.18); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.35), 0 0 18px rgba(212, 175, 55, 0.55);}
 
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: bold; transition: 0.4s; z-index: 2000; opacity: 0; }
+        .btn-download { 
+            background: linear-gradient(135deg, var(--accent), #d4af37); 
+            color: #1e293b; 
+            border: none; 
+            padding: 14px 22px; 
+            border-radius: 14px; 
+            font-weight: 800; 
+            font-size: 1.02rem; 
+            cursor: pointer; 
+            width: 100%; 
+            transition: 0.35s var(--ease); 
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: 0.4px;
+            box-shadow: 0 8px 22px rgba(212, 175, 55, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-download::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transition: left 0.6s var(--ease);
+        }
+        .btn-download:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(212, 175, 55, 0.5); }
+        .btn-download:hover::before { left: 100%; }
+        .btn-download:active { transform: translateY(-1px); }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px); background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #fff; padding: 13px 28px; border-radius: 30px; font-weight: 700; transition: 0.45s var(--ease); z-index: 2000; opacity: 0; box-shadow: 0 14px 30px rgba(0,0,0,0.3); letter-spacing: 0.3px;}
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
-        footer { background: #1b263b; color: #a1a1aa; text-align: center; padding: 3rem; margin-top: 5rem; border-top: 4px solid var(--accent); }
+        footer { background: linear-gradient(180deg, #1b263b, #0f172a); color: #a1a1aa; text-align: center; padding: 3rem; margin-top: 5rem; border-top: 4px solid var(--accent); position: relative;}
+        footer::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: var(--accent); border-radius: 0 0 8px 8px;}
 
         /* ── AdSense Reklam Kutusu ── */
         .mg-ad-box {
@@ -378,6 +540,90 @@
             z-index: 1;
             font-family: 'Nunito', sans-serif;
         }
+
+        /* ── YENİ: Favori Sayaç Rozeti ── */
+        .fav-count-badge {
+            background: var(--danger);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            border-radius: 20px;
+            padding: 2px 8px;
+            margin-left: auto;
+            margin-right: 5px;
+            min-width: 22px;
+            text-align: center;
+            transition: 0.3s var(--ease);
+            opacity: 0;
+            transform: scale(0.7);
+        }
+        .fav-count-badge.show { opacity: 1; transform: scale(1); }
+        .sidebar ul li[data-filter="favoriler"] { display: flex; align-items: center; }
+
+        /* ── YENİ: Sonuç Sayacı ── */
+        .result-info-bar {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: -10px 0 5px 0;
+            letter-spacing: 0.3px;
+            opacity: 0.85;
+        }
+
+        /* ── YENİ: Yukarı Çık Butonu ── */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #fff;
+            border: none;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-accent);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.8);
+            transition: 0.4s var(--ease);
+        }
+        .scroll-top-btn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .scroll-top-btn:hover { transform: translateY(-4px) scale(1.08); box-shadow: var(--shadow-hover); }
+        [data-theme="dark"] .scroll-top-btn { color: #1e293b; }
+
+        /* ── YENİ: Rastgele Söz Butonu ── */
+        .btn-random-quote {
+            background: linear-gradient(135deg, #1b263b, #415a77);
+            color: #fff;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.35s var(--ease);
+            box-shadow: 0 6px 16px rgba(27,38,59,0.25);
+            white-space: nowrap;
+        }
+        .btn-random-quote:hover { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); transform: translateY(-3px); box-shadow: var(--shadow-accent); }
+        [data-theme="dark"] .btn-random-quote { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #1e293b; }
+        .quote-filter-wrapper { flex-wrap: wrap; gap: 12px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+        }
     </style>
 </head>
 <body>
@@ -385,12 +631,12 @@
     <header>
         <div class="header-top-bar">
             <div class="header-actions">
-                <button class="icon-btn" id="menuToggle" title="Menü"><i class="fas fa-bars"></i></button>
+                <button class="icon-btn" id="menuToggle" title="Menü" aria-label="Menüyü Aç"><i class="fas fa-bars"></i></button>
                 <img src="logo.png" alt="MuGöl Logo" class="header-brand-logo">
             </div>
             <div class="header-actions">
-                <button class="icon-btn" id="searchToggleBtn" title="Arama Yap"><i class="fas fa-search"></i></button>
-                <button class="icon-btn" id="themeToggle" title="Temayı Değiştir"><i class="fas fa-moon"></i></button>
+                <button class="icon-btn" id="searchToggleBtn" title="Arama Yap" aria-label="Aramayı Aç"><i class="fas fa-search"></i></button>
+                <button class="icon-btn" id="themeToggle" title="Temayı Değiştir" aria-label="Temayı Değiştir"><i class="fas fa-moon"></i></button>
             </div>
         </div>
         <div class="header-content">
@@ -402,9 +648,9 @@
     <div class="search-overlay-bar" id="searchBarUI">
         <div class="search-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Yazar, eser, şiir veya söz ara..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="Yazar, eser, şiir veya söz ara..." autocomplete="off" aria-label="Arama">
         </div>
-        <button class="close-search-btn" id="closeSearchBtn"><i class="fas fa-times"></i></button>
+        <button class="close-search-btn" id="closeSearchBtn" aria-label="Aramayı Kapat"><i class="fas fa-times"></i></button>
     </div>
 
     <nav class="sidebar" id="sidebar">
@@ -419,7 +665,7 @@
             <li class="filter-item" data-filter="siirler"><i class="fas fa-layer-group"></i> Şiir Kitapları</li>
             <li class="filter-item" data-filter="siir_oku"><i class="fas fa-feather-alt"></i> Şiir Oku (Tam Metin)</li>
             
-            <li class="filter-item" data-filter="favoriler"><i class="fas fa-heart"></i> Favorilerim</li>
+            <li class="filter-item" data-filter="favoriler"><i class="fas fa-heart"></i> Favorilerim <span class="fav-count-badge" id="favCountBadge">0</span></li>
             <li class="filter-item" data-filter="sozler"><i class="fas fa-quote-right"></i> İlham Veren Sözler</li>
         </ul>
     </nav>
@@ -432,14 +678,14 @@
 
     <!-- YAZAR DETAY MODALI -->
     <div class="modal" id="authorModal">
-        <span class="close-modal-btn" onclick="closeModals()"><i class="fas fa-times"></i></span>
+        <span class="close-modal-btn" onclick="closeModals()" role="button" aria-label="Kapat" tabindex="0"><i class="fas fa-times"></i></span>
         <div id="modalContent" class="modal-grid"></div>
     </div>
 
     <!-- KART HAZIRLAMA MODALI -->
     <div class="modal editor-modal" id="quoteEditorModal">
         <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-            <span class="close-modal-btn" style="position:static;" onclick="closeModals()"><i class="fas fa-times"></i></span>
+            <span class="close-modal-btn" style="position:static;" onclick="closeModals()" role="button" aria-label="Kapat" tabindex="0"><i class="fas fa-times"></i></span>
         </div>
         
         <div class="qotd-card-capture" id="captureTarget">
@@ -474,6 +720,7 @@
     </div>
 
     <div class="toast" id="toastBox"><i class="fas fa-check-circle"></i> <span>Kopyalandı!</span></div>
+    <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Yukarı Çık" title="Yukarı Çık"><i class="fas fa-arrow-up"></i></button>
     <footer><p>&copy; <span id="year"></span> MuGöl Edebiyat. Tüm hakları saklıdır.</p></footer>
 
     <script>
@@ -492,7 +739,9 @@
             authorModal: document.getElementById('authorModal'),
             modalContent: document.getElementById('modalContent'),
             searchInput: document.getElementById('searchInput'),
-            toastBox: document.getElementById('toastBox')
+            toastBox: document.getElementById('toastBox'),
+            favCountBadge: document.getElementById('favCountBadge'),
+            scrollTopBtn: document.getElementById('scrollTopBtn')
         };
         document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -506,6 +755,13 @@
         
         let favorites = JSON.parse(localStorage.getItem('mugolFavorites')) || [];
         let currentTab = "all"; 
+        
+        function updateFavCountBadge() {
+            if (!elements.favCountBadge) return;
+            elements.favCountBadge.textContent = favorites.length;
+            elements.favCountBadge.classList.toggle('show', favorites.length > 0);
+        }
+        updateFavCountBadge();
         
         // Filtre değişkenleri
         let currentQuoteAuthorFilter = "all";
@@ -544,7 +800,27 @@
             }, 400); 
         }
 
-        const getInitialsSVG = (name) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75'><rect width='75' height='75' fill='%231b263b'/><text x='50%' y='50%' fill='%23c4a77d' font-size='28' font-family='sans-serif' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>${name[0]}</text></svg>`;
+        // ── YENİ: ESC tuşu ile menü/modal/arama kapatma ──
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (elements.searchBarUI.classList.contains('open')) {
+                    elements.searchBarUI.classList.remove('open');
+                }
+                closeModals();
+            }
+        });
+
+        // ── DÜZELTME: data URI artık güvenli şekilde kodlanıyor (bazı tarayıcılarda boş/şeffaf görsel sorununu çözer) ──
+        const getInitialsSVG = (name) => {
+            const initial = (name && name.trim()) ? name.trim()[0].toUpperCase() : '?';
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75 75"><rect width="75" height="75" fill="#1b263b"/><text x="50%" y="50%" fill="#c4a77d" font-size="28" font-family="sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">${initial}</text></svg>`;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        };
+
+        // ── DÜZELTME: author.image alanı boş/tanımsızsa direkt baş harf görseline düş (boş daire sorununu önler) ──
+        const getAuthorImageSrc = (author) => {
+            return (author && author.image && author.image.trim()) ? author.image : getInitialsSVG(author ? author.name : '');
+        };
 
         function hideAllContainers() {
             elements.authorContainer.style.display = 'none';
@@ -566,13 +842,20 @@
                 return match && (author.name.toLocaleLowerCase('tr-TR').includes(searchLower) || author.category.includes(searchLower));
             });
 
+            if (filtered.length === 0) {
+                let emptyMsg = (filterType === 'favoriler')
+                    ? "Henüz favori yazarınız yok. Yazar kartlarındaki <i class=\"fas fa-heart\"></i> ikonuna dokunarak buraya ekleyebilirsiniz."
+                    : "Aradığınız kriterlere uygun yazar bulunamadı.";
+                elements.authorContainer.insertAdjacentHTML('beforeend', `<p style='grid-column:1/-1; text-align:center; color:var(--text-light); margin-top:20px; font-weight:600; padding: 0 1rem;'>${emptyMsg}</p>`);
+            }
+
             filtered.forEach(author => {
                 const isFav = favorites.includes(author.id) ? 'active' : '';
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <img src="${author.image}" class="author-img" onerror="this.src='${getInitialsSVG(author.name)}'">
-                    <button class="fav-btn ${isFav}" onclick="toggleFavorite(${author.id}, this)"><i class="fas fa-heart"></i></button>
+                    <img src="${getAuthorImageSrc(author)}" class="author-img" loading="lazy" alt="${author.name}" onerror="this.onerror=null;this.src='${getInitialsSVG(author.name)}'">
+                    <button class="fav-btn ${isFav}" onclick="toggleFavorite(${author.id}, this)" aria-label="Favorilere ekle/çıkar" title="Favorilere ekle/çıkar"><i class="fas fa-heart"></i></button>
                     <h2 class="author-name">${author.name}</h2>
                     <div class="author-meta">${author.years} | ${author.movement}</div>
                     <p class="bio-short">${author.shortBio}</p>
@@ -739,6 +1022,20 @@
             });
             
             filterWrapper.appendChild(filterSelect);
+
+            // ── YENİ: Rastgele Söz Butonu ──
+            const randomBtn = document.createElement('button');
+            randomBtn.className = 'btn-random-quote';
+            randomBtn.innerHTML = '<i class="fas fa-dice"></i> Rastgele Söz';
+            randomBtn.addEventListener('click', () => {
+                const pool = quotesData.filter(q => (currentQuoteAuthorFilter === "all") || (q.authorName === currentQuoteAuthorFilter));
+                if (pool.length > 0) {
+                    const randomQuote = pool[Math.floor(Math.random() * pool.length)];
+                    openQuoteEditor(randomQuote.id);
+                }
+            });
+            filterWrapper.appendChild(randomBtn);
+
             elements.quoteContainer.appendChild(filterWrapper);
 
             let filtered = quotesData.filter(q => {
@@ -780,12 +1077,18 @@
             if (favorites.includes(id)) { favorites = favorites.filter(f => f !== id); btn.classList.remove('active'); } 
             else { favorites.push(id); btn.classList.add('active'); }
             localStorage.setItem('mugolFavorites', JSON.stringify(favorites));
+            updateFavCountBadge();
             if(currentTab === 'favoriler') displayAuthors('favoriler');
         }
 
+        let currentModalAuthorId = null;
+
         window.openModal = (id) => {
             const author = authorsData.find(a => a.id === id);
+            if (!author) return;
             const books = booksData.filter(b => b.authorId === id);
+            const isFav = favorites.includes(id) ? 'active' : '';
+            currentModalAuthorId = id;
 
             let booksHTML = books.map(b => `
                 <li>
@@ -796,9 +1099,15 @@
 
             elements.modalContent.innerHTML = `
                 <div class="modal-left">
-                    <img src="${author.image}" onerror="this.src='${getInitialsSVG(author.name)}'">
+                    <button class="fav-btn modal-fav-btn ${isFav}" onclick="toggleFavorite(${author.id}, this)" aria-label="Favorilere ekle/çıkar" title="Favorilere ekle/çıkar"><i class="fas fa-heart"></i></button>
+                    <img src="${getAuthorImageSrc(author)}" alt="${author.name}" onerror="this.onerror=null;this.src='${getInitialsSVG(author.name)}'">
                     <h2>${author.name}</h2>
-                    <span style="background:rgba(255,255,255,0.2); padding: 4px 15px; border-radius: 20px; font-size:0.85rem; font-weight:700;">${author.years}</span>
+                    <span class="modal-years-badge">${author.years}</span>
+                    <div class="modal-action-row">
+                        <button class="modal-action-btn" onclick="navigateModal(-1)" aria-label="Önceki Yazar"><i class="fas fa-chevron-left"></i> Önceki</button>
+                        <button class="modal-action-btn" onclick="shareAuthor(${author.id})" aria-label="Yazarı Paylaş"><i class="fas fa-share-alt"></i></button>
+                        <button class="modal-action-btn" onclick="navigateModal(1)" aria-label="Sonraki Yazar">Sonraki <i class="fas fa-chevron-right"></i></button>
+                    </div>
                 </div>
                 <div class="modal-right">
                     <h3>Hakkında</h3><p>${author.longBio}</p>
@@ -807,11 +1116,34 @@
                 </div>
             `;
             
+            elements.modalContent.scrollTop = 0;
+            const modalRightEl = elements.modalContent.querySelector('.modal-right');
+            if (modalRightEl) modalRightEl.scrollTop = 0;
+
             elements.authorModal.style.display = 'flex'; 
             setTimeout(() => {
                 elements.authorModal.classList.add('open'); 
                 elements.overlay.classList.add('open');
             }, 10);
+        }
+
+        window.navigateModal = (direction) => {
+            if (currentModalAuthorId === null || authorsData.length === 0) return;
+            const idx = authorsData.findIndex(a => a.id === currentModalAuthorId);
+            if (idx === -1) return;
+            const newIdx = (idx + direction + authorsData.length) % authorsData.length;
+            openModal(authorsData[newIdx].id);
+        }
+
+        window.shareAuthor = (id) => {
+            const author = authorsData.find(a => a.id === id);
+            if (!author) return;
+            const shareText = `${author.name} (${author.years}) — MuGöl Edebiyat\n\n${author.shortBio || ''}`;
+            if (navigator.share) {
+                navigator.share({ title: author.name, text: shareText }).catch(() => {});
+            } else {
+                copyToClipboard(shareText);
+            }
         }
 
         window.copyToClipboard = (text) => {
@@ -840,12 +1172,16 @@
             });
         });
 
+        let searchDebounceTimer = null;
         elements.searchInput.addEventListener('input', (e) => {
             const val = e.target.value;
-            if (currentTab === 'sozler') displayQuotes(val);
-            else if (currentTab === 'kitaplar' || currentTab === 'siirler') displayBooks(currentTab, val);
-            else if (currentTab === 'siir_oku') displayPoems(val);
-            else displayAuthors(currentTab, val);
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                if (currentTab === 'sozler') displayQuotes(val);
+                else if (currentTab === 'kitaplar' || currentTab === 'siirler') displayBooks(currentTab, val);
+                else if (currentTab === 'siir_oku') displayPoems(val);
+                else displayAuthors(currentTab, val);
+            }, 180);
         });
 
         const gradients = [
@@ -934,6 +1270,18 @@
                 link.href = canvas.toDataURL('image/png'); 
                 link.click();
             });
+        });
+
+        // ── YENİ: Yukarı Çık Butonu ──
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                elements.scrollTopBtn.classList.add('show');
+            } else {
+                elements.scrollTopBtn.classList.remove('show');
+            }
+        });
+        elements.scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         displayAuthors('all');
