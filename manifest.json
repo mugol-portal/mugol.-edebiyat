@@ -1,0 +1,33 @@
+{
+  "name": "MuGöl Edebiyat | Kütüphane",
+  "short_name": "MuGöl Edebiyat",
+  "description": "Yazarlar, kitaplar, şiirler ve ilham veren alıntılardan oluşan edebiyat kütüphanesi.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#1b263b",
+  "lang": "tr",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

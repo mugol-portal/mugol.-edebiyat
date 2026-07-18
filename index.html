@@ -12,8 +12,19 @@
         })();
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MuGöl Edebiyat | Kütüphane</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1b263b">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MuGöl Edebiyat">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- GOOGLE ADSENSE -->
@@ -187,6 +198,28 @@
         .sidebar ul li.menu-external a { color: #e63946; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 800; padding: 14px 25px; width: 100%;}
         .sidebar ul li.menu-external:hover { background: var(--danger); padding-left: 0;}
         .sidebar ul li.menu-external:hover a { color: #fff; }
+
+        /* ── YENİ: Uygulamayı Yükle Menü Butonu ── */
+        .sidebar ul li.menu-install {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(196, 167, 125, 0.14);
+            border-left: 4px solid var(--accent);
+            border-bottom: none;
+            margin-top: 15px;
+            color: var(--accent);
+            font-weight: 800;
+        }
+        .sidebar ul li.menu-install:hover { background: var(--accent); color: #1e293b; padding-left: 30px; border-left-color: var(--accent); }
+        [data-theme="dark"] .sidebar ul li.menu-install:hover { color: #1e293b; }
+
+        /* ── YENİ: Uygulama Yükleme Bilgi Modalı ── */
+        .install-info-modal { width: 92%; max-width: 420px; padding: 2.5rem 2rem; text-align: center; }
+        .install-info-content { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        .install-info-logo { width: 72px; height: 72px; border-radius: 18px; object-fit: cover; box-shadow: var(--shadow-md); }
+        .install-info-content h3 { color: var(--primary); font-size: 1.3rem; font-weight: 800; }
+        .install-info-content p { color: var(--text-light); font-size: 0.98rem; line-height: 1.6; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999; display: none; opacity: 0; transition: 0.4s; }
         .overlay.open { display: block; opacity: 1; }
@@ -491,6 +524,121 @@
         .btn-download:hover::before { left: 100%; }
         .btn-download:active { transform: translateY(-1px); }
 
+        /* ── YENİ: Yazarın Tüm Sözleri Tek PNG Kartı ── */
+        .aq-preview-frame {
+            width: 100%;
+            aspect-ratio: 1080 / 1350;
+            overflow: hidden;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+        }
+        .aq-preview-frame .aq-card-capture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top left;
+        }
+        .aq-card-capture {
+            width: 1080px;
+            height: 1350px;
+            background: linear-gradient(135deg, #148074, #0a524a);
+            display: flex;
+            flex-direction: column;
+            padding: 64px 68px;
+            box-sizing: border-box;
+            color: #ffffff;
+            font-family: 'Nunito', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        .aq-card-capture::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at top right, rgba(255,255,255,0.12), transparent 55%),
+                radial-gradient(ellipse at bottom left, rgba(0,0,0,0.18), transparent 50%);
+            pointer-events: none;
+        }
+        .aq-bg-deco {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            font-family: Georgia, serif;
+            font-weight: 900;
+            line-height: 1;
+            color: rgba(255,255,255,0.05);
+            user-select: none;
+        }
+        .aq-bg-deco-1 { top: -60px; left: -30px; font-size: 340px; transform: rotate(-8deg); }
+        .aq-bg-deco-2 { bottom: 160px; right: -60px; font-size: 420px; transform: rotate(6deg); }
+        .aq-bg-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.07);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .aq-bg-ring-1 { width: 460px; height: 460px; top: -160px; right: -140px; }
+        .aq-bg-ring-2 { width: 260px; height: 260px; bottom: 60px; left: -110px; border-color: rgba(255,255,255,0.06); }
+        .aq-bg-dots {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1.6px, transparent 1.6px);
+            background-size: 26px 26px;
+            -webkit-mask-image: radial-gradient(ellipse 620px 420px at 88% 8%, #000 0%, transparent 70%);
+            mask-image: radial-gradient(ellipse 620px 420px at 88% 8%, #000 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .aq-header { display: flex; align-items: center; gap: 22px; margin-bottom: 30px; position: relative; z-index: 1; flex-shrink: 0; }
+        .aq-header img { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.9); flex-shrink: 0; background: #1b263b; }
+        .aq-header-text { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .aq-name-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .aq-header-text .aq-name { font-size: 30px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.15; }
+        .aq-years { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.16); padding: 4px 12px; border-radius: 20px; letter-spacing: 0.3px; white-space: nowrap; }
+        .aq-header-text .aq-sub-row { display: flex; align-items: center; gap: 10px; }
+        .aq-header-text .aq-sub-line { width: 30px; height: 3px; background: var(--accent, #c4a77d); border-radius: 3px; flex-shrink: 0; }
+        .aq-header-text .aq-sub { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.8); letter-spacing: 2px; text-transform: uppercase; }
+
+        /* Söz balonları — kart görünümlü, referans tasarıma uygun */
+        .aq-quotes-list { flex-grow: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 22px; position: relative; z-index: 1; }
+        .aq-quote-item {
+            position: relative;
+            background: linear-gradient(165deg, #f5f7f9, #e7ebef);
+            border-radius: 26px;
+            padding: 34px 40px;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .aq-quote-item .aq-quote-mark {
+            position: absolute;
+            top: -34px;
+            right: 26px;
+            font-size: 96px;
+            font-family: Georgia, serif;
+            font-weight: 900;
+            line-height: 1;
+            color: #c4924a;
+            opacity: 1;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        }
+        .aq-quote-item .aq-quote-text {
+            font-size: 27px;
+            font-weight: 700;
+            line-height: 1.42;
+            color: #16324a;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            position: relative;
+            z-index: 1;
+        }
+        .aq-footer { flex-shrink: 0; margin-top: 36px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; gap: 14px; position: relative; z-index: 1; }
+        .aq-footer img { height: 46px; width: 46px; object-fit: cover; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.5); }
+        .aq-footer span { font-size: 27px; font-weight: 800; letter-spacing: 0.8px; color: #fff; }
+
+
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px); background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #fff; padding: 13px 28px; border-radius: 30px; font-weight: 700; transition: 0.45s var(--ease); z-index: 2000; opacity: 0; box-shadow: 0 14px 30px rgba(0,0,0,0.3); letter-spacing: 0.3px;}
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
@@ -646,7 +794,7 @@
     <div class="search-overlay-bar" id="searchBarUI">
         <div class="search-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Yazar, eser, şiir veya söz ara..." autocomplete="off" aria-label="Arama">
+            <input type="text" id="searchInput" placeholder="Yazar, eser, şiir veya alıntı ara..." autocomplete="off" aria-label="Arama">
         </div>
         <button class="close-search-btn" id="closeSearchBtn" aria-label="Aramayı Kapat"><i class="fas fa-times"></i></button>
     </div>
@@ -664,10 +812,21 @@
             <li class="filter-item" data-filter="siir_oku"><i class="fas fa-feather-alt"></i> Şiir Oku (Tam Metin)</li>
             
             <li class="filter-item" data-filter="favoriler"><i class="fas fa-heart"></i> Favorilerim <span class="fav-count-badge" id="favCountBadge">0</span></li>
-            <li class="filter-item" data-filter="sozler"><i class="fas fa-quote-right"></i> İlham Veren Sözler</li>
+            <li class="filter-item" data-filter="sozler"><i class="fas fa-quote-right"></i> Alıntılar</li>
+            <li class="menu-install" id="installMenuBtn"><i class="fas fa-download"></i> Uygulamayı Yükle</li>
         </ul>
     </nav>
     <div class="overlay" id="overlay"></div>
+
+    <!-- UYGULAMA YÜKLEME BİLGİ MODALI (tarayıcı otomatik yükleme desteklemediğinde) -->
+    <div class="modal install-info-modal" id="installInfoModal">
+        <span class="close-modal-btn" onclick="closeModals()" role="button" aria-label="Kapat" tabindex="0"><i class="fas fa-times"></i></span>
+        <div class="install-info-content">
+            <img src="logo.png" alt="MuGöl Logo" class="install-info-logo">
+            <h3>Uygulamayı Ana Ekrana Ekle</h3>
+            <p id="installInfoText">Bu cihazda otomatik yükleme desteklenmiyor. Tarayıcı menünüzden "Ana Ekrana Ekle" veya "Uygulamayı Yükle" seçeneğini kullanabilirsiniz.</p>
+        </div>
+    </div>
 
     <main class="container" id="author-container"></main>
     <main class="container book-grid" id="book-container"></main> 
@@ -714,6 +873,47 @@
             <div class="palette-title">Kart Arka Planını Seç</div>
             <div class="color-palette" id="colorPalette"></div>
             <button class="btn-download" id="downloadBtn"><i class="fas fa-download"></i> Kartı İndir</button>
+        </div>
+    </div>
+
+    <!-- YAZARIN TÜM ALINTILARI - ÖNİZLEME VE RENK SEÇİM MODALI -->
+    <div class="modal editor-modal" id="authorQuotesEditorModal">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+            <span class="close-modal-btn" style="position:static;" onclick="closeModals()" role="button" aria-label="Kapat" tabindex="0"><i class="fas fa-times"></i></span>
+        </div>
+
+        <div class="aq-preview-frame" id="aqPreviewFrame">
+            <div class="aq-card-capture" id="aqCaptureTarget">
+                <div class="aq-bg-ring aq-bg-ring-1"></div>
+                <div class="aq-bg-ring aq-bg-ring-2"></div>
+                <div class="aq-bg-dots"></div>
+                <div class="aq-bg-deco aq-bg-deco-1">&ldquo;</div>
+                <div class="aq-bg-deco aq-bg-deco-2">&rdquo;</div>
+                <div class="aq-header">
+                    <img id="aqAuthorImg" src="" alt="Yazar">
+                    <div class="aq-header-text">
+                        <div class="aq-name-row">
+                            <div class="aq-name" id="aqAuthorName">-</div>
+                            <div class="aq-years" id="aqAuthorYears"></div>
+                        </div>
+                        <div class="aq-sub-row">
+                            <div class="aq-sub-line"></div>
+                            <div class="aq-sub" id="aqAuthorSub">Alıntılar</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="aq-quotes-list" id="aqQuotesList"></div>
+                <div class="aq-footer">
+                    <img src="logo.png" alt="MuGöl">
+                    <span>MuGöl Edebiyat</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="qotd-controls">
+            <div class="palette-title">Kart Arka Planını Seç</div>
+            <div class="color-palette" id="aqColorPalette"></div>
+            <button class="btn-download" id="aqDownloadBtn"><i class="fas fa-download"></i> Alıntıları İndir</button>
         </div>
     </div>
 
@@ -791,10 +991,14 @@
             elements.sidebar.classList.remove('open'); 
             elements.authorModal.classList.remove('open'); 
             document.getElementById('quoteEditorModal').classList.remove('open'); 
+            document.getElementById('authorQuotesEditorModal').classList.remove('open');
+            document.getElementById('installInfoModal').classList.remove('open');
             elements.overlay.classList.remove('open'); 
             setTimeout(() => {
                 elements.authorModal.style.display = 'none';
                 document.getElementById('quoteEditorModal').style.display = 'none';
+                document.getElementById('authorQuotesEditorModal').style.display = 'none';
+                document.getElementById('installInfoModal').style.display = 'none';
             }, 400); 
         }
 
@@ -1003,7 +1207,7 @@
             
             const allOption = document.createElement('option');
             allOption.value = "all";
-            allOption.textContent = "Tüm Yazarların Sözleri";
+            allOption.textContent = "Tüm Yazarların Alıntıları";
             filterSelect.appendChild(allOption);
             
             quoteAuthors.forEach(author => {
@@ -1024,7 +1228,7 @@
             // ── YENİ: Rastgele Söz Butonu ──
             const randomBtn = document.createElement('button');
             randomBtn.className = 'btn-random-quote';
-            randomBtn.innerHTML = '<i class="fas fa-dice"></i> Rastgele Söz';
+            randomBtn.innerHTML = '<i class="fas fa-dice"></i> Rastgele Alıntı';
             randomBtn.addEventListener('click', () => {
                 const pool = quotesData.filter(q => (currentQuoteAuthorFilter === "all") || (q.authorName === currentQuoteAuthorFilter));
                 if (pool.length > 0) {
@@ -1033,6 +1237,18 @@
                 }
             });
             filterWrapper.appendChild(randomBtn);
+
+            // ── YENİ: Belirli yazar seçiliyken "Alıntılarını İndir" butonu ──
+            if (currentQuoteAuthorFilter !== "all") {
+                const selectedAuthor = authorsData.find(a => a.name === currentQuoteAuthorFilter);
+                if (selectedAuthor) {
+                    const dlBtn = document.createElement('button');
+                    dlBtn.className = 'btn-random-quote';
+                    dlBtn.innerHTML = '<i class="fas fa-download"></i> Alıntılarını İndir';
+                    dlBtn.addEventListener('click', () => downloadAuthorQuotesCard(selectedAuthor.id));
+                    filterWrapper.appendChild(dlBtn);
+                }
+            }
 
             elements.quoteContainer.appendChild(filterWrapper);
 
@@ -1105,6 +1321,9 @@
                         <button class="modal-action-btn" onclick="navigateModal(-1)" aria-label="Önceki Yazar"><i class="fas fa-chevron-left"></i> Önceki</button>
                         <button class="modal-action-btn" onclick="shareAuthor(${author.id})" aria-label="Yazarı Paylaş"><i class="fas fa-share-alt"></i></button>
                         <button class="modal-action-btn" onclick="navigateModal(1)" aria-label="Sonraki Yazar">Sonraki <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="modal-action-row">
+                        <button class="modal-action-btn" style="flex-basis:100%;" onclick="downloadAuthorQuotesCard(${author.id})" aria-label="Alıntılarını İndir" title="Yazarın tüm alıntılarını tek PNG olarak indir"><i class="fas fa-download"></i> Alıntılarını İndir</button>
                     </div>
                 </div>
                 <div class="modal-right">
@@ -1256,6 +1475,140 @@
             }, 10);
         }
 
+        // ── YENİ: Yazarın Tüm Alıntılarını Önizleme + Renk Seçimiyle Hazırla ──
+        const aqGradients = [
+            "linear-gradient(135deg, #148074, #0a524a)",
+            "linear-gradient(135deg, #2b3a55, #1b263b)",
+            "linear-gradient(135deg, #4b5563, #1f2937)",
+            "linear-gradient(135deg, #65a30d, #3f6212)",
+            "linear-gradient(135deg, #d97706, #92400e)",
+            "linear-gradient(135deg, #be123c, #881337)",
+            "linear-gradient(135deg, #312e81, #1e1b4b)",
+            "linear-gradient(135deg, #ea580c, #9a3412)",
+            "linear-gradient(135deg, #6d28d9, #4c1d95)",
+            "linear-gradient(135deg, #d946ef, #a21caf)"
+        ];
+        let aqActiveSwatch = null;
+        const aqPaletteEl = document.getElementById('aqColorPalette');
+        aqGradients.forEach((g, i) => {
+            const div = document.createElement('div');
+            div.className = 'color-swatch';
+            div.style.background = g;
+            if (i === 0) { div.classList.add('active'); aqActiveSwatch = div; }
+            div.onclick = () => {
+                if (aqActiveSwatch) aqActiveSwatch.classList.remove('active');
+                div.classList.add('active');
+                aqActiveSwatch = div;
+                document.getElementById('aqCaptureTarget').style.background = g;
+            };
+            aqPaletteEl.appendChild(div);
+        });
+
+        function scaleAqPreview() {
+            const frame = document.getElementById('aqPreviewFrame');
+            const target = document.getElementById('aqCaptureTarget');
+            const scale = frame.clientWidth / 1080;
+            target.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('resize', () => {
+            if (document.getElementById('authorQuotesEditorModal').classList.contains('open')) scaleAqPreview();
+        });
+
+        window.downloadAuthorQuotesCard = (authorId) => {
+            const author = authorsData.find(a => a.id === authorId);
+            if (!author) return;
+
+            const authorQuotes = quotesData.filter(q => q.authorName === author.name);
+            if (authorQuotes.length === 0) {
+                elements.toastBox.querySelector('span').textContent = 'Bu yazara ait alıntı bulunamadı.';
+                elements.toastBox.classList.add('show');
+                setTimeout(() => {
+                    elements.toastBox.classList.remove('show');
+                    elements.toastBox.querySelector('span').textContent = 'Kopyalandı!';
+                }, 3000);
+                return;
+            }
+
+            const imgEl = document.getElementById('aqAuthorImg');
+            imgEl.src = getAuthorImageSrc(author);
+            imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = getInitialsSVG(author.name); };
+
+            document.getElementById('aqAuthorName').textContent = author.name;
+            document.getElementById('aqAuthorYears').textContent = author.years || '';
+            document.getElementById('aqAuthorSub').textContent = 'Alıntılar';
+
+            // Renk paletini başlangıç durumuna al
+            const target = document.getElementById('aqCaptureTarget');
+            target.style.background = aqGradients[0];
+            if (aqActiveSwatch) aqActiveSwatch.classList.remove('active');
+            const firstSwatch = aqPaletteEl.firstElementChild;
+            if (firstSwatch) { firstSwatch.classList.add('active'); aqActiveSwatch = firstSwatch; }
+
+            const listEl = document.getElementById('aqQuotesList');
+            listEl.innerHTML = authorQuotes.map(q => `
+                <div class="aq-quote-item">
+                    <span class="aq-quote-mark">&rdquo;</span>
+                    <div class="aq-quote-text">${q.text}</div>
+                </div>
+            `).join('');
+
+            // Söz sayısı/uzunluğuna göre yazı boyutu ve balon iç boşluğunu otomatik küçült,
+            // 1080x1350 sabit kalsın, taşma olmasın.
+            const items = listEl.querySelectorAll('.aq-quote-text');
+            const bubbles = listEl.querySelectorAll('.aq-quote-item');
+            const marks = listEl.querySelectorAll('.aq-quote-mark');
+            let fontSize = 27;
+            const minFontSize = 14;
+            const applySizing = (size) => {
+                items.forEach(el => { el.style.fontSize = size + 'px'; });
+                const padV = Math.max(18, Math.min(34, size + 7));
+                const padH = Math.max(22, Math.min(40, size + 13));
+                bubbles.forEach(el => { el.style.padding = padV + 'px ' + padH + 'px'; });
+                const markSize = Math.max(48, Math.min(96, size * 3.4));
+                marks.forEach(el => { el.style.fontSize = markSize + 'px'; el.style.top = (-markSize * 0.36) + 'px'; });
+                const gap = authorQuotes.length > 5 ? Math.max(12, 22 - authorQuotes.length) : 22;
+                listEl.style.gap = gap + 'px';
+            };
+            applySizing(fontSize);
+
+            let guard = 0;
+            while (listEl.scrollHeight > listEl.clientHeight && fontSize > minFontSize && guard < 60) {
+                fontSize -= 1;
+                applySizing(fontSize);
+                guard++;
+            }
+
+            const modal = document.getElementById('authorQuotesEditorModal');
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.classList.add('open');
+                elements.overlay.classList.add('open');
+                scaleAqPreview();
+            }, 10);
+        };
+
+        document.getElementById('aqDownloadBtn').addEventListener('click', () => {
+            const target = document.getElementById('aqCaptureTarget');
+            const author = document.getElementById('aqAuthorName').textContent || 'yazar';
+            html2canvas(target, {
+                width: 1080,
+                height: 1350,
+                scale: 1,
+                backgroundColor: null,
+                useCORS: true,
+                onclone: (doc) => {
+                    // Klonlanan öğede önizleme ölçeğini sıfırla, gerçek 1080x1350 yakalansın.
+                    const cloned = doc.getElementById('aqCaptureTarget');
+                    if (cloned) cloned.style.transform = 'none';
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `mugol-alintilar-${author.toLowerCase().replace(/\s+/g, '-')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const target = document.getElementById('captureTarget');
             html2canvas(target, { 
@@ -1294,6 +1647,80 @@
             }
         });
     }
+    </script>
+
+    <!-- ── PWA: Service Worker Kaydı ── -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js').catch(() => {
+                // Service worker kaydı başarısız olursa uygulama normal (online) çalışmaya devam eder.
+            });
+        });
+    }
+    </script>
+
+    <!-- ── PWA: Uygulamayı Yükle Butonu (menüde her zaman görünür) ── -->
+    <script>
+    (function() {
+        let deferredInstallPrompt = null;
+        const installBtn = document.getElementById('installMenuBtn');
+        const installModal = document.getElementById('installInfoModal');
+        const installText = document.getElementById('installInfoText');
+
+        // Tarayıcı otomatik yükleme istemini destekliyorsa yakala (Chrome/Edge/Android vb.)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+        });
+
+        function isStandalone() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        function showInstallInfo(message) {
+            elements.sidebar.classList.remove('open');
+            installText.textContent = message;
+            installModal.style.display = 'block';
+            setTimeout(() => {
+                installModal.classList.add('open');
+                elements.overlay.classList.add('open');
+            }, 10);
+        }
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (isStandalone()) {
+                    showInstallInfo('Uygulama zaten yüklü ve şu anda uygulama modunda çalışıyor.');
+                    return;
+                }
+
+                if (deferredInstallPrompt) {
+                    elements.sidebar.classList.remove('open');
+                    deferredInstallPrompt.prompt();
+                    try {
+                        await deferredInstallPrompt.userChoice;
+                    } catch (e) {}
+                    deferredInstallPrompt = null;
+                    return;
+                }
+
+                const ua = navigator.userAgent;
+                const isIOS = /iphone|ipad|ipod/i.test(ua);
+                const isSafari = isIOS && /safari/i.test(ua) && !/crios|fxios/i.test(ua);
+
+                if (isIOS && isSafari) {
+                    showInstallInfo('Safari\'de alt menüdeki Paylaş simgesine dokunun, ardından "Ana Ekrana Ekle" seçeneğini seçin.');
+                } else {
+                    showInstallInfo('Bu cihazda otomatik yükleme desteklenmiyor. Tarayıcı menünüzden "Ana Ekrana Ekle" veya "Uygulamayı Yükle" seçeneğini kullanabilirsiniz.');
+                }
+            });
+        }
+    })();
     </script>
 
 </body>
